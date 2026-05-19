@@ -1,0 +1,299 @@
+:root {
+    --neon-green: #a3ff00;
+    --black: #000000;
+    --white: #ffffff;
+    --grid-size: 40px;
+}
+
+body {
+    margin: 0;
+    background-color: var(--white);
+    /* The "Math Paper" Grid */
+    background-image: 
+        linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    font-family: 'Arial Black', sans-serif;
+    color: var(--black);
+    overflow-x: hidden;
+}
+
+/* --- BACKGROUND ANIMATIONS --- */
+
+/* Rotating Star from your reference */
+.floating-star {
+    position: fixed;
+    top: 10%;
+    right: 5%;
+    font-size: 15rem;
+    color: var(--neon-green);
+    z-index: -1;
+    user-select: none;
+    animation: rotate-star 15s linear infinite;
+}
+
+@keyframes rotate-star {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Moving text in background */
+.bg-animation {
+    position: fixed;
+    top: 50%;
+    width: 100%;
+    z-index: -2;
+    opacity: 0.05;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-shape {
+    font-size: 8rem;
+    white-space: nowrap;
+    animation: slide-text 25s linear infinite;
+}
+
+@keyframes slide-text {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+}
+
+/* --- UI COMPONENTS --- */
+
+.navbar {
+    background: var(--black);
+    color: var(--neon-green);
+    padding: 15px 30px;
+    border-bottom: 8px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* THE DYNAMIC FIX */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Keeps it above everything else */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Optional: Add a slight shadow when scrolling to make it pop */
+.navbar.scrolled {
+    box-shadow: 0 10px 0px rgba(163, 255, 0, 0.3);
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+}
+
+.brutalist-card {
+    background: var(--white);
+    border: 6px solid var(--black);
+    box-shadow: 15px 15px 0px var(--black);
+    padding: 30px;
+    margin: 60px auto;
+    max-width: 900px;
+    position: relative;
+}
+
+h1 {
+    background: var(--black);
+    color: var(--white);
+    display: inline-block;
+    padding: 10px 25px;
+    transform: rotate(-1.5deg);
+    text-transform: uppercase;
+    margin-top: -50px; /* Pulls it up over the border slightly */
+}
+
+/* --- BUTTONS & CONTROLS --- */
+
+.btn-brutal {
+    background: var(--neon-green);
+    border: 4px solid var(--black);
+    padding: 10px 20px;
+    font-family: 'Arial Black', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    box-shadow: 6px 6px 0px var(--black);
+    cursor: pointer;
+    transition: 0.1s;
+    text-decoration: none;
+    color: var(--black);
+}
+
+.btn-brutal:hover {
+    box-shadow: none;
+    transform: translate(6px, 6px);
+    background: var(--white);
+}
+
+/* Custom styling for the sliders to match the vibe */
+input[type="range"] {
+    accent-color: var(--black);
+    cursor: crosshair;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    background: #000;
+}
+
+.control-group label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    background: var(--neon-green);
+    padding: 2px 5px;
+}
+/* Gallery Layout */
+.gallery-title {
+    margin: 40px 0;
+    font-size: 3rem;
+}
+
+.grid {
+    display: grid;
+    /* This creates the multi-column look you wanted */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 40px;
+    padding: 20px;
+}
+
+.gallery-item.brutalist-card {
+    margin: 0; /* Remove the auto margin used on the index page */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: 0.2s;
+}
+
+.image-preview {
+    background: #000;
+    border: 3px solid var(--black);
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.item-details {
+    margin-top: 15px;
+    border-top: 3px solid var(--black);
+    padding-top: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.description-area p::first-letter {
+    font-size: 3rem;
+    float: left;
+    margin-right: 8px;
+    background: var(--black);
+    color: var(--neon-green);
+    padding: 0 10px;
+    line-height: 1;
+}
+/* Small variation of the brutal button for the gallery */
+.btn-brutal.small {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+}
+
+.btn-brutal.delete:hover {
+    background: #ff4444;
+    color: white;
+}
+/* MOBILE COMPATIBILITY: NEO-BRUTALIST OVERRIDE */
+@media (max-width: 768px) {
+    /* Adjust grid size for smaller screens */
+    :root {
+        --grid-size: 20px;
+    }
+
+    /* Stack the Navbar items */
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Shrink the Star so it doesn't cover text */
+    .floating-star {
+        font-size: 8rem;
+        top: 5%;
+        right: 2%;
+    }
+
+    /* Make the main card take up full width */
+    .brutalist-card {
+        margin: 20px 10px;
+        padding: 15px;
+        box-shadow: 8px 8px 0px var(--black);
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-top: -30px;
+    }
+
+    /* Stack the controls vertically for thumb-scrolling */
+    .options-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    .control-group {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Ensure the canvas doesn't overflow the screen */
+    .canvas-container {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+.tech-tag {
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
+    padding: 5px 15px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.2s;
+    cursor: default;
+}
+
+.tech-tag:hover {
+    background: var(--neon-green);
+    color: var(--black);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(163, 255, 0, 0.4);
+}

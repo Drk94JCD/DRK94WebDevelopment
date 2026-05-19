@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remodel NYC+CT — UX Case Study · Juan Carlos Diego Angulo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS — Remodel NYC+CT Brand System
+═══════════════════════════════════════════════════════════ */
+:root {
+  --ink:        #0F0E0D;
+  --ink-warm:   #1A1007;
+  --copper:     #92400E;
+  --copper-lt:  #B45309;
+  --copper-glow:#D97706;
+  --copper-pale:#FAEEDA;
+  --stone-900:  #1C1917;
+  --stone-700:  #44403C;
+  --stone-500:  #78716C;
+  --stone-300:  #D6D3D1;
+  --stone-100:  #F5F0EB;
+  --cream:      #FAF7F2;
+  --white:      #FFFFFF;
+  --teal:       #0F6E56;
+  --serif:      'Cormorant Garamond', Georgia, serif;
+  --sans:       'DM Sans', system-ui, sans-serif;
+  --mono:       'DM Mono', monospace;
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--sans);
+  background: var(--ink);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  cursor: default;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════════════════ */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--copper-glow);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.3s;
+  mix-blend-mode: screen;
+}
+.cursor.expanded { width: 40px; height: 40px; opacity: 0.4; }
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  height: 64px;
+  background: rgba(15,14,13,0.7);
+  backdrop-filter: blur(20px) saturate(1.6);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.4s;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(255,255,255,0.5);
+}
+.nav-logo-mark {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--copper);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 14px; color: var(--copper-glow);
+}
+.nav-links {
+  display: flex; gap: 36px; list-style: none;
+}
+.nav-links a {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45); text-decoration: none;
+  transition: color 0.25s;
+}
+.nav-links a:hover { color: var(--copper-glow); }
+.nav-cta {
+  background: transparent; border: 1px solid rgba(146,64,14,0.5);
+  color: var(--copper-glow); font-family: var(--mono);
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 8px 20px; border-radius: 3px; cursor: pointer;
+  transition: all 0.25s;
+}
+.nav-cta:hover { background: var(--copper); border-color: var(--copper); color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding: 120px 48px 80px;
+  text-align: center;
+}
+
+/* Ambient background mesh */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(146,64,14,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(15,110,86,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 50% at 10% 50%, rgba(146,64,14,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Animated grid overlay */
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--copper-glow);
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 1s var(--ease-out) 0.2s forwards;
+}
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(52px, 8vw, 110px);
+  font-weight: 300; line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+  opacity: 0; animation: fadeUp 1s var(--ease-out) 0.4s forwards;
+}
+.hero-title em { font-style: italic; color: var(--copper-glow); }
+.hero-title .line2 { display: block; font-weight: 600; }
+.hero-sub {
+  font-size: 17px; font-weight: 300; color: var(--stone-300);
+  max-width: 560px; line-height: 1.7; margin-bottom: 48px;
+  opacity: 0; animation: fadeUp 1s var(--ease-out) 0.6s forwards;
+}
+.hero-badges {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 56px;
+  opacity: 0; animation: fadeUp 1s var(--ease-out) 0.75s forwards;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 6px 16px;
+  font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--stone-300);
+}
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--copper-glow); }
+.hero-ctas {
+  display: flex; gap: 16px; justify-content: center;
+  opacity: 0; animation: fadeUp 1s var(--ease-out) 0.9s forwards;
+}
+.btn-primary {
+  background: var(--copper); color: #fff;
+  padding: 14px 36px; border-radius: 4px;
+  font-size: 13px; letter-spacing: 0.08em;
+  text-transform: uppercase; text-decoration: none;
+  transition: background 0.25s, transform 0.2s;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--copper-lt); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: rgba(255,255,255,0.7);
+  padding: 14px 36px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-size: 13px; letter-spacing: 0.08em;
+  text-transform: uppercase; text-decoration: none;
+  transition: border-color 0.25s, color 0.25s;
+  display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--copper-glow); color: var(--copper-glow); }
+
+/* Scroll indicator */
+.scroll-cue {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; animation: fadeUp 1s var(--ease-out) 1.2s forwards;
+}
+.scroll-cue span {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--stone-500);
+}
+.scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(to bottom, var(--copper), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION SYSTEM
+═══════════════════════════════════════════════════════════ */
+section { position: relative; }
+
+.section-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--copper-glow);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.section-label::before {
+  content: ''; width: 32px; height: 1px; background: var(--copper);
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 300; line-height: 1.05; letter-spacing: -0.01em;
+  margin-bottom: 24px;
+}
+.section-title em { font-style: italic; color: var(--copper-glow); }
+.section-title strong { font-weight: 600; }
+
+.section-body {
+  font-size: 17px; font-weight: 300; color: var(--stone-300);
+  line-height: 1.75; max-width: 600px;
+}
+
+/* Reveal animation triggered by IntersectionObserver */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ═══════════════════════════════════════════════════════════
+   OVERVIEW — STATS STRIP
+═══════════════════════════════════════════════════════════ */
+.stats-strip {
+  background: var(--stone-900);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding: 0;
+  overflow: hidden;
+}
+.stats-inner {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  max-width: 1200px; margin: 0 auto;
+}
+.stat-item {
+  padding: 48px 40px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+  position: relative;
+  transition: background 0.3s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(146,64,14,0.05); }
+.stat-num {
+  font-family: var(--serif); font-size: 56px; font-weight: 300;
+  color: var(--copper-glow); line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-num sup { font-size: 28px; }
+.stat-label {
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--stone-500);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRODUCT OVERVIEW SECTION
+═══════════════════════════════════════════════════════════ */
+.overview {
+  padding: 140px 48px;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
+}
+.overview-visual {
+  position: relative;
+}
+.overview-frame {
+  background: var(--stone-900);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px; padding: 32px;
+  position: relative; overflow: hidden;
+}
+.overview-frame::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--copper), var(--copper-glow), transparent);
+}
+.platform-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--copper-glow);
+  background: rgba(146,64,14,0.15); border: 1px solid rgba(146,64,14,0.3);
+  display: inline-block; padding: 4px 10px; border-radius: 2px;
+  margin-bottom: 20px;
+}
+.platform-list {
+  list-style: none; display: flex; flex-direction: column; gap: 0;
+}
+.platform-list li {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px; color: var(--stone-300);
+  transition: color 0.2s;
+}
+.platform-list li:last-child { border-bottom: none; }
+.platform-list li:hover { color: #fff; }
+.p-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(146,64,14,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.p-name { font-weight: 500; font-size: 13px; color: #fff; }
+.p-desc { font-size: 11px; color: var(--stone-500); }
+
+/* ═══════════════════════════════════════════════════════════
+   USER PROFILES — PERSONA CARDS
+═══════════════════════════════════════════════════════════ */
+.personas-section {
+  background: var(--stone-900);
+  padding: 140px 48px;
+}
+.personas-inner { max-width: 1200px; margin: 0 auto; }
+.personas-header { text-align: center; margin-bottom: 80px; }
+.personas-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+}
+.persona-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 48px 36px;
+  position: relative; overflow: hidden;
+  transition: background 0.35s, border-color 0.35s, transform 0.35s var(--ease-out);
+  cursor: default;
+}
+.persona-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0;
+  background: var(--copper);
+  transition: height 0.5s var(--ease-out);
+}
+.persona-card:hover { background: rgba(146,64,14,0.06); border-color: rgba(146,64,14,0.25); }
+.persona-card:hover::before { height: 100%; }
+.persona-card:hover { transform: translateY(-4px); }
+
+.persona-num {
+  font-family: var(--serif); font-size: 72px; font-weight: 300;
+  color: rgba(255,255,255,0.04); line-height: 1;
+  position: absolute; top: 16px; right: 24px;
+}
+.persona-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--copper-glow);
+  margin-bottom: 20px;
+}
+.persona-name {
+  font-family: var(--serif); font-size: 28px; font-weight: 400;
+  margin-bottom: 6px; line-height: 1.1;
+}
+.persona-role {
+  font-size: 12px; color: var(--stone-500); margin-bottom: 28px;
+  letter-spacing: 0.05em;
+}
+.persona-needs {
+  list-style: none; display: flex; flex-direction: column; gap: 12px;
+  margin-bottom: 28px;
+}
+.persona-needs li {
+  display: flex; gap: 10px; font-size: 13px; color: var(--stone-300);
+  line-height: 1.5;
+}
+.persona-needs li::before {
+  content: '→'; color: var(--copper-glow); flex-shrink: 0;
+  font-size: 12px; margin-top: 2px;
+}
+.persona-pain {
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px; padding: 14px 16px;
+  font-size: 12px; font-style: italic; color: var(--stone-500);
+  border-left: 2px solid rgba(146,64,14,0.4);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROTOTYPE SHOWCASE
+═══════════════════════════════════════════════════════════ */
+.prototype-section {
+  padding: 140px 48px;
+  position: relative; overflow: hidden;
+}
+.prototype-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(146,64,14,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.prototype-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+.prototype-header { text-align: center; margin-bottom: 80px; }
+
+/* The main phone embed container */
+.prototype-stage {
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: 60px; flex-wrap: wrap;
+}
+.prototype-embed-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.proto-glow {
+  position: absolute; inset: -40px;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(146,64,14,0.25), transparent 70%);
+  pointer-events: none; z-index: -1;
+}
+.prototype-iframe-shell {
+  width: 390px; height: 820px;
+  border-radius: 54px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,0.12),
+    0 0 0 3px rgba(0,0,0,0.9),
+    0 60px 160px rgba(0,0,0,0.9),
+    0 0 80px rgba(146,64,14,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  background: #000;
+  position: relative;
+}
+.prototype-iframe-shell iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+  border-radius: 52px;
+}
+
+.prototype-sidebar {
+  max-width: 380px;
+  display: flex; flex-direction: column;
+  justify-content: center; gap: 0;
+  padding-top: 60px;
+}
+.proto-feature {
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: padding-left 0.3s var(--ease-out);
+  cursor: default;
+}
+.proto-feature:last-child { border-bottom: none; }
+.proto-feature:hover { padding-left: 12px; }
+.proto-feat-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 8px;
+}
+.proto-feat-title {
+  font-family: var(--serif); font-size: 22px; font-weight: 400;
+  margin-bottom: 8px; line-height: 1.2;
+}
+.proto-feat-body {
+  font-size: 13px; color: var(--stone-400); line-height: 1.65;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DESIGN SYSTEM SECTION
+═══════════════════════════════════════════════════════════ */
+.design-section {
+  background: var(--stone-900);
+  padding: 140px 48px;
+}
+.design-inner { max-width: 1200px; margin: 0 auto; }
+.design-header { margin-bottom: 80px; }
+
+.design-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px;
+  margin-bottom: 72px;
+}
+.design-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 36px;
+  transition: border-color 0.3s, background 0.3s;
+}
+.design-card:hover {
+  background: rgba(146,64,14,0.05);
+  border-color: rgba(146,64,14,0.2);
+}
+.design-card-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: rgba(146,64,14,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 20px;
+}
+.design-card-title {
+  font-family: var(--serif); font-size: 22px;
+  margin-bottom: 12px; font-weight: 400;
+}
+.design-card-body {
+  font-size: 14px; color: var(--stone-400); line-height: 1.7;
+}
+
+/* Color swatches */
+.swatch-row {
+  display: flex; gap: 0; border-radius: 10px; overflow: hidden;
+  height: 72px; margin-bottom: 20px;
+}
+.swatch {
+  flex: 1; display: flex; align-items: flex-end;
+  padding: 8px 12px; transition: flex 0.4s var(--ease-out);
+  cursor: pointer;
+}
+.swatch:hover { flex: 2.5; }
+.swatch-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Type specimen */
+.type-specimen {
+  display: flex; flex-direction: column; gap: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 36px;
+  background: rgba(255,255,255,0.02);
+}
+.type-row { display: flex; align-items: baseline; gap: 20px; }
+.type-name { font-family: var(--mono); font-size: 10px; color: var(--stone-500); width: 80px; flex-shrink: 0; }
+.t-display { font-family: var(--serif); font-size: 48px; font-weight: 300; color: #fff; line-height: 1; }
+.t-display-i { font-family: var(--serif); font-size: 48px; font-weight: 300; font-style: italic; color: var(--copper-glow); line-height: 1; }
+.t-heading { font-family: var(--serif); font-size: 28px; font-weight: 600; color: #fff; }
+.t-body { font-family: var(--sans); font-size: 16px; font-weight: 300; color: var(--stone-300); }
+.t-mono { font-family: var(--mono); font-size: 13px; color: var(--copper); }
+
+/* ═══════════════════════════════════════════════════════════
+   GESTALT / DESIGN PRINCIPLES SECTION
+═══════════════════════════════════════════════════════════ */
+.principles-section {
+  padding: 140px 48px;
+}
+.principles-inner { max-width: 1200px; margin: 0 auto; }
+
+.principles-scroll {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  margin-top: 72px;
+}
+.principle-block {
+  position: relative; padding: 40px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s var(--ease-out);
+}
+.principle-block:hover {
+  border-color: rgba(146,64,14,0.3);
+  transform: translateY(-6px);
+}
+.principle-bg-num {
+  position: absolute; bottom: -10px; right: 10px;
+  font-family: var(--serif); font-size: 100px; font-weight: 700;
+  color: rgba(255,255,255,0.02); line-height: 1;
+  pointer-events: none;
+}
+.principle-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 12px;
+}
+.principle-title {
+  font-family: var(--serif); font-size: 26px; font-weight: 400;
+  margin-bottom: 16px;
+}
+.principle-body {
+  font-size: 13px; color: var(--stone-400); line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEXT STEPS
+═══════════════════════════════════════════════════════════ */
+.nextsteps-section {
+  background: var(--stone-900);
+  padding: 140px 48px;
+}
+.nextsteps-inner { max-width: 1100px; margin: 0 auto; }
+.nextsteps-header { text-align: center; margin-bottom: 80px; }
+
+.steps-timeline {
+  display: flex; flex-direction: column; gap: 0;
+  position: relative;
+}
+.steps-timeline::before {
+  content: '';
+  position: absolute; left: 28px; top: 20px; bottom: 20px;
+  width: 1px; background: linear-gradient(to bottom, var(--copper), rgba(146,64,14,0.1));
+}
+.step-row {
+  display: grid; grid-template-columns: 56px 1fr;
+  gap: 32px; padding: 40px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  align-items: start;
+  transition: background 0.3s;
+}
+.step-row:last-child { border-bottom: none; }
+.step-row:hover { background: rgba(146,64,14,0.03); margin: 0 -48px; padding-left: 48px; padding-right: 48px; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 1px solid rgba(146,64,14,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px; color: var(--copper-glow);
+  background: var(--stone-900);
+  position: relative; z-index: 1; flex-shrink: 0;
+}
+.step-content { padding-top: 8px; }
+.step-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 8px;
+}
+.step-title {
+  font-family: var(--serif); font-size: 26px; font-weight: 400;
+  margin-bottom: 12px; line-height: 1.15;
+}
+.step-body {
+  font-size: 14px; color: var(--stone-400); line-height: 1.7;
+  max-width: 680px;
+}
+.step-metric {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 14px;
+  background: rgba(146,64,14,0.12);
+  border: 1px solid rgba(146,64,14,0.25);
+  border-radius: 20px; padding: 4px 14px;
+  font-family: var(--mono); font-size: 10px; color: var(--copper-glow);
+  letter-spacing: 0.08em;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ITERATIVE DESIGN — CHANGE LOG
+═══════════════════════════════════════════════════════════ */
+.changes-section {
+  padding: 140px 48px;
+}
+.changes-inner { max-width: 1200px; margin: 0 auto; }
+
+.changes-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  margin-top: 72px;
+}
+.change-block {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; overflow: hidden;
+}
+.change-header {
+  background: rgba(255,255,255,0.03);
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 14px;
+}
+.change-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--copper); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; flex-shrink: 0;
+}
+.change-head-title { font-size: 14px; font-weight: 500; }
+.change-body { padding: 28px; }
+.change-before, .change-after {
+  padding: 16px; border-radius: 8px; margin-bottom: 12px;
+}
+.change-before {
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid var(--stone-700);
+}
+.change-after {
+  background: rgba(146,64,14,0.08);
+  border-left: 3px solid var(--copper-glow);
+}
+.change-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--stone-500); margin-bottom: 6px;
+}
+.change-text { font-size: 13px; color: var(--stone-300); line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════
+   FEATURE MATRIX
+═══════════════════════════════════════════════════════════ */
+.matrix-section {
+  background: var(--stone-900);
+  padding: 140px 48px;
+}
+.matrix-inner { max-width: 1100px; margin: 0 auto; }
+
+.matrix-table {
+  width: 100%; border-collapse: collapse;
+  margin-top: 60px;
+}
+.matrix-table th {
+  text-align: center; padding: 16px 20px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--stone-500);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.matrix-table th:first-child { text-align: left; }
+.matrix-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 14px; color: var(--stone-300);
+}
+.matrix-table td:first-child {
+  font-weight: 500; color: #fff;
+}
+.matrix-table tr:hover td { background: rgba(146,64,14,0.04); }
+.matrix-table tbody tr:last-child td { border-bottom: none; }
+.check { color: var(--copper-glow); text-align: center; font-size: 18px; }
+.dash { color: var(--stone-700); text-align: center; }
+
+/* ═══════════════════════════════════════════════════════════
+   CLOSING / CONTACT
+═══════════════════════════════════════════════════════════ */
+.closing-section {
+  padding: 180px 48px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.closing-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(146,64,14,0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+.closing-title {
+  font-family: var(--serif);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 300; line-height: 1;
+  margin-bottom: 24px;
+}
+.closing-title em { font-style: italic; color: var(--copper-glow); }
+.closing-sub {
+  font-size: 18px; font-weight: 300; color: var(--stone-400);
+  max-width: 500px; margin: 0 auto 48px; line-height: 1.7;
+}
+.closing-meta {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px; flex-wrap: wrap;
+  margin-top: 56px;
+}
+.meta-item {
+  display: flex; flex-direction: column; gap: 2px; align-items: center;
+}
+.meta-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--stone-600); }
+.meta-value { font-size: 13px; color: var(--stone-300); }
+.meta-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.08); }
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+footer {
+  background: var(--stone-900);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-copy {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+  color: var(--stone-500);
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+  color: var(--stone-600); text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--copper-glow); }
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.3; transform: scaleY(0.7); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .overview { grid-template-columns: 1fr; gap: 60px; padding: 80px 28px; }
+  .personas-grid { grid-template-columns: 1fr; }
+  .prototype-stage { flex-direction: column; align-items: center; }
+  .prototype-iframe-shell { width: 340px; height: 720px; }
+  .prototype-iframe-shell iframe { border-radius: 44px; }
+  .design-grid { grid-template-columns: 1fr; }
+  .principles-scroll { grid-template-columns: 1fr; }
+  .changes-cols { grid-template-columns: 1fr; }
+  .nextsteps-header, .prototype-header, .personas-header { text-align: left; }
+  .steps-timeline::before { display: none; }
+  .hero { padding: 100px 28px 60px; }
+  .personas-section, .design-section, .matrix-section, .nextsteps-section { padding: 80px 28px; }
+  .prototype-section, .principles-section, .changes-section, .closing-section { padding: 80px 28px; }
+  .nav { padding: 0 24px; }
+  footer { padding: 24px 28px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL-DRIVEN HORIZONTAL TICKER
+═══════════════════════════════════════════════════════════ */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding: 16px 0;
+  background: rgba(146,64,14,0.04);
+}
+.ticker-track {
+  display: flex; gap: 0;
+  animation: ticker 30s linear infinite;
+  white-space: nowrap;
+}
+.ticker-track:hover { animation-play-state: paused; }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 20px;
+  padding: 0 40px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--stone-600);
+}
+.ticker-item .dot { color: var(--copper); font-size: 16px; }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Persona Images ── */
+.persona-avatar {
+  width: 100%; height: 220px;
+  object-fit: cover; object-position: center top;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  filter: grayscale(20%) contrast(1.05);
+  transition: filter 0.4s, transform 0.4s var(--ease-out);
+  display: block;
+}
+.persona-card:hover .persona-avatar {
+  filter: grayscale(0%) contrast(1.1);
+  transform: scale(1.02);
+}
+
+
+/* ── Video CTA Buttons ── */
+.video-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 13px 28px;
+  background: transparent;
+  border: 1px solid rgba(146,64,14,0.5);
+  border-radius: 4px;
+  color: var(--copper-glow);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.2s var(--ease-out);
+}
+.video-cta-btn:hover {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.video-cta-btn--teal {
+  border-color: rgba(15,110,86,0.5);
+  color: #2DD4BF;
+}
+.video-cta-btn--teal:hover {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+/* ── Video Section ── */
+.video-section {
+  background: var(--ink);
+  padding: 140px 48px;
+  position: relative; overflow: hidden;
+}
+.video-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(146,64,14,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.video-inner { max-width: 1200px; margin: 0 auto; }
+.video-header { text-align: center; margin-bottom: 72px; }
+
+.video-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+}
+@media (max-width: 900px) {
+  .video-grid { grid-template-columns: 1fr; }
+}
+
+.video-card {
+  background: var(--stone-900);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px; overflow: hidden;
+  transition: border-color 0.35s, transform 0.35s var(--ease-out);
+}
+.video-card:hover {
+  border-color: rgba(146,64,14,0.35);
+  transform: translateY(-6px);
+}
+.video-frame-wrap {
+  position: relative; width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  background: var(--ink);
+  overflow: hidden;
+}
+.video-placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #1A1007 0%, #292524 50%, #1A1007 100%);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.video-placeholder:hover { background: linear-gradient(135deg, #2A1A0A 0%, #3A302A 50%, #1A1007 100%); }
+.video-play-btn {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(146,64,14,0.3);
+  border: 2px solid rgba(146,64,14,0.6);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s, transform 0.3s var(--ease-out);
+  flex-shrink: 0;
+}
+.video-placeholder:hover .video-play-btn {
+  background: var(--copper);
+  transform: scale(1.1);
+}
+.video-play-icon {
+  width: 0; height: 0;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-left: 22px solid rgba(255,255,255,0.9);
+  margin-left: 4px;
+}
+.video-placeholder-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--stone-500);
+}
+.video-frame-wrap video, .video-frame-wrap iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+.video-card-body { padding: 28px 32px 32px; }
+.video-card-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--copper); margin-bottom: 8px;
+}
+.video-card-title {
+  font-family: var(--serif); font-size: 24px; font-weight: 400;
+  margin-bottom: 10px; line-height: 1.2;
+}
+.video-card-body-text {
+  font-size: 13px; color: var(--stone-400); line-height: 1.65;
+}
+.video-upload-note {
+  margin-top: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(146,64,14,0.1);
+  border: 1px solid rgba(146,64,14,0.2);
+  border-radius: 20px; padding: 5px 14px;
+  font-family: var(--mono); font-size: 9px;
+  color: var(--copper-glow); letter-spacing: 0.1em;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-logo">
+      <span>Remodel NYC+CT</span>
+    </div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#personas">Personas</a></li>
+    <li><a href="#prototype">Prototype</a></li>
+    <li><a href="#design">Design</a></li>
+    <li><a href="#videos">Videos</a></li>
+    <li><a href="#nextsteps">Next Steps</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('nextsteps').scrollIntoView({behavior:'smooth'})">
+    View Roadmap
+  </button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" role="banner">
+  <p class="hero-eyebrow" style="opacity:0; animation:fadeUp 1s var(--ease-out) 0.1s forwards;">Google UX Design Certificate · Case Study</p>
+  <div class="hero-logo-wrap" style="margin-bottom:32px; opacity:0; animation:fadeUp 1s var(--ease-out) 0.3s forwards;">
+    <img src="assets/img/remodelbrand.png" alt="Remodel NYC+CT — Bespoke Family Living" style="width:clamp(280px,50vw,580px); height:auto; mix-blend-mode: lighten;" class="hero-logo-img">
+  </div>
+  <p class="hero-sub">
+    A luxury residential remodeling platform designed for the Tri-State area —
+    built for every homeowner, regardless of language, ability, or background.
+  </p>
+  <div class="hero-badges">
+    <span class="badge"><span class="badge-dot"></span>NYC · Westchester · Fairfield County</span>
+    <span class="badge"><span class="badge-dot"></span>WCAG 2.1 AA Accessible</span>
+    <span class="badge"><span class="badge-dot"></span>EN / ES Bilingual</span>
+    <span class="badge"><span class="badge-dot"></span>January – April 2025</span>
+  </div>
+  <div class="hero-ctas">
+    <a href="#prototype" class="btn-primary">View Prototype</a>
+    <a href="#nextsteps" class="btn-ghost">Investor Roadmap</a>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ STATS STRIP ═══ -->
+<div class="stats-strip" aria-label="Project key metrics">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-num">3</div>
+      <div class="stat-label">User Personas</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-num">100<sup>%</sup></div>
+      <div class="stat-label">Task Completion Rate</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Usability Test Rounds</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-num">7</div>
+      <div class="stat-label">App Screens Designed</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TICKER ═══ -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <!-- Duplicated for seamless loop -->
+    <span class="ticker-item"><span class="dot">◆</span> Luxury Residential Remodeling</span>
+    <span class="ticker-item"><span class="dot">◆</span> Kitchens · Bathrooms · Home Offices</span>
+    <span class="ticker-item"><span class="dot">◆</span> WCAG 2.1 AA Compliance</span>
+    <span class="ticker-item"><span class="dot">◆</span> EN/ES Bilingual UX</span>
+    <span class="ticker-item"><span class="dot">◆</span> Screen Reader Optimized</span>
+    <span class="ticker-item"><span class="dot">◆</span> Client Portal · Admin Dashboard</span>
+    <span class="ticker-item"><span class="dot">◆</span> Tri-State Area Platform</span>
+    <span class="ticker-item"><span class="dot">◆</span> Luxury Residential Remodeling</span>
+    <span class="ticker-item"><span class="dot">◆</span> Kitchens · Bathrooms · Home Offices</span>
+    <span class="ticker-item"><span class="dot">◆</span> WCAG 2.1 AA Compliance</span>
+    <span class="ticker-item"><span class="dot">◆</span> EN/ES Bilingual UX</span>
+    <span class="ticker-item"><span class="dot">◆</span> Screen Reader Optimized</span>
+    <span class="ticker-item"><span class="dot">◆</span> Client Portal · Admin Dashboard</span>
+    <span class="ticker-item"><span class="dot">◆</span> Tri-State Area Platform</span>
+  </div>
+</div>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="overview" style="padding: 140px 48px;">
+  <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center;" class="responsive-grid-2">
+    <div>
+      <p class="section-label reveal">Product Overview</p>
+      <h2 class="section-title reveal reveal-delay-1">
+        Built for <em>every</em><br>
+        <strong>family</strong> in the<br>
+        Tri-State area.
+      </h2>
+      <p class="section-body reveal reveal-delay-2">
+        Remodel NYC+CT is a premium digital platform connecting homeowners across
+        New York City, Westchester, and Fairfield County, CT with a trusted luxury
+        remodeling contractor. Prospects browse a curated portfolio, review compliance
+        credentials, and submit detailed inquiries — all in a single session.
+      </p>
+      <div style="margin-top:36px; display:flex; flex-direction:column; gap:16px;" class="reveal reveal-delay-3">
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <div style="width:4px; height:4px; border-radius:50%; background:var(--copper-glow); margin-top:9px; flex-shrink:0;"></div>
+          <p style="font-size:14px; color:var(--stone-400); line-height:1.65;">
+            <strong style="color:#fff;">Public Website</strong> — Portfolio browser, inquiry form, compliance credentials, bilingual toggle
+          </p>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <div style="width:4px; height:4px; border-radius:50%; background:var(--copper-glow); margin-top:9px; flex-shrink:0;"></div>
+          <p style="font-size:14px; color:var(--stone-400); line-height:1.65;">
+            <strong style="color:#fff;">Client App</strong> — Project dashboard, document signing, real-time messaging, compliance tracker
+          </p>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <div style="width:4px; height:4px; border-radius:50%; background:var(--copper-glow); margin-top:9px; flex-shrink:0;"></div>
+          <p style="font-size:14px; color:var(--stone-400); line-height:1.65;">
+            <strong style="color:#fff;">Admin Dashboard</strong> — Project management, permit tracking, client communication hub
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-2">
+      <div class="overview-frame">
+        <div class="platform-tag">Platform Architecture</div>
+        <ul class="platform-list">
+          <li>
+            <div class="p-icon">🌐</div>
+            <div>
+              <div class="p-name">Public Website</div>
+              <div class="p-desc">Portfolio · Inquiry · EN/ES Toggle</div>
+            </div>
+          </li>
+          <li>
+            <div class="p-icon">📱</div>
+            <div>
+              <div class="p-name">Client Mobile App</div>
+              <div class="p-desc">Dashboard · Docs · Messaging · Compliance</div>
+            </div>
+          </li>
+          <li>
+            <div class="p-icon">🖥️</div>
+            <div>
+              <div class="p-name">Client Desktop Portal</div>
+              <div class="p-desc">Timeline · Document Vault · Progress</div>
+            </div>
+          </li>
+          <li>
+            <div class="p-icon">⚙️</div>
+            <div>
+              <div class="p-name">Admin Dashboard</div>
+              <div class="p-desc">Project Mgmt · Permits · Communications</div>
+            </div>
+          </li>
+          <li>
+            <div class="p-icon">♿</div>
+            <div>
+              <div class="p-name">Accessibility Layer</div>
+              <div class="p-desc">VoiceOver · WCAG AA · High Contrast</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PERSONAS ═══ -->
+<section class="personas-section" id="personas" aria-label="User Personas">
+  <div class="personas-inner">
+    <div class="personas-header">
+      <p class="section-label reveal" style="justify-content:center;">User Research</p>
+      <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">
+        Three personas.<br><em>One platform.</em>
+      </h2>
+      <p class="section-body reveal reveal-delay-2" style="margin:0 auto; text-align:center;">
+        Every design decision maps directly to a real user need — inclusive design
+        is the foundation, not an afterthought.
+      </p>
+    </div>
+
+    <div class="personas-grid">
+      <!-- Persona 01 -->
+      <div class="persona-card reveal">
+        <div class="persona-num" aria-hidden="true">01</div>
+        <div class="persona-tag">Executive Homeowner</div>
+        <div class="persona-name">Meg Thompson</div>
+        <img
+          src="assets/img/Margaret.png"
+          alt="Meg Thompson — professional woman in her 40s, executive homeowner"
+          class="persona-avatar"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+        <div class="persona-role">44 · Marketing Director · Greenwich, CT</div>
+        <ul class="persona-needs">
+          <li>Evaluate contractor portfolio without a phone call</li>
+          <li>Browse by project type and location in one session</li>
+          <li>Submit a pre-detailed inquiry with style preferences</li>
+        </ul>
+        <div class="persona-pain">
+          "I need a contractor who can work around my schedule, not the other way around."
+        </div>
+      </div>
+
+      <!-- Persona 02 -->
+      <div class="persona-card reveal reveal-delay-1">
+        <div class="persona-num" aria-hidden="true">02</div>
+        <div class="persona-tag">Bilingual Homeowners · Marginalized</div>
+        <div class="persona-name">Carlos &amp; Ana Reyes</div>
+        <img
+          src="assets/img/CarlosandAna.png"
+          alt="Carlos and Ana Reyes — bilingual homeowners, business owners"
+          class="persona-avatar"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+        <div class="persona-role">38 / 36 · Business Owners · Bronx, NY → Stamford, CT</div>
+        <ul class="persona-needs">
+          <li>Communicate project needs without language barriers</li>
+          <li>Understand pricing without financial jargon</li>
+          <li>Have cultural style preferences respected</li>
+        </ul>
+        <div class="persona-pain">
+          "English-only forms felt like the platform wasn't built for us."
+        </div>
+      </div>
+
+      <!-- Persona 03 -->
+      <div class="persona-card reveal reveal-delay-2">
+        <div class="persona-num" aria-hidden="true">03</div>
+        <div class="persona-tag">Low Vision · Accessibility</div>
+        <div class="persona-name">James Harrington</div>
+        <img
+          src="assets/img/James.png"
+          alt="James Harrington — retired gentleman in his late 60s"
+          class="persona-avatar"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+        <div class="persona-role">67 · Retired Federal Judge · Upper West Side, NYC</div>
+        <ul class="persona-needs">
+          <li>Navigate the site fully via VoiceOver screen reader</li>
+          <li>Access descriptive alt-text on all portfolio images</li>
+          <li>Submit an inquiry without small-print barriers</li>
+        </ul>
+        <div class="persona-pain">
+          "Image-heavy sites with no alt-text lock me out completely."
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROTOTYPE SHOWCASE ═══ -->
+<section class="prototype-section" id="prototype" aria-label="Interactive Prototype">
+  <div class="prototype-inner">
+    <div class="prototype-header">
+      <p class="section-label reveal" style="justify-content:center;">High-Fidelity Prototype</p>
+      <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">
+        The client app.<br><em>Live and interactive.</em>
+      </h2>
+      <p class="section-body reveal reveal-delay-2" style="margin:0 auto; text-align:center;">
+        Seven screens. Full navigation. Three accessibility modes.
+        Swipe or use the screen pills to explore.
+      </p>
+        <a href="http://localhost/Remodeling_web/public/login.php" class="video-cta-btn" aria-label="Visit the Remodel NYC+CT live Client Portal">
+            <span>Visit Live Client Portal</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M1 7H13M13 7L7 1M13 7L7 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+    </div>
+
+    <div class="prototype-stage">
+      <!-- Live embedded prototype -->
+      <div class="prototype-embed-wrap reveal">
+        <div class="proto-glow" aria-hidden="true"></div>
+        <div class="prototype-iframe-shell" role="region" aria-label="Interactive iPhone prototype">
+          <iframe
+            src="remodel_nycct_iphone_prototype_v2.html"
+            title="Remodel NYC+CT iPhone Client App Prototype"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin"
+            aria-label="Interactive mobile prototype showcasing the Remodel NYC+CT client app"
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- Feature sidebar -->
+      <div class="prototype-sidebar">
+        <div class="proto-feature reveal">
+          <div class="proto-feat-label">Screen 01</div>
+          <div class="proto-feat-title">Homepage &amp; Portfolio</div>
+          <div class="proto-feat-body">A curated portfolio browser with copper accent navigation and project type filtering. Designed to let Meg evaluate work within seconds.</div>
+        </div>
+        <div class="proto-feature reveal reveal-delay-1">
+          <div class="proto-feat-label">Screen 02</div>
+          <div class="proto-feat-title">Client Dashboard</div>
+          <div class="proto-feat-body">Real-time project status, progress timeline, and document notifications. Clients see their project at a glance — no phone calls required.</div>
+        </div>
+        <div class="proto-feature reveal reveal-delay-2">
+          <div class="proto-feat-label">Screen 03 – 04</div>
+          <div class="proto-feat-title">Messages &amp; Documents</div>
+          <div class="proto-feat-body">Encrypted client-contractor messaging and a document vault with e-signature support. All permits, contracts, and compliance docs in one place.</div>
+        </div>
+        <div class="proto-feature reveal reveal-delay-3">
+          <div class="proto-feat-label">Screen 05 – 06</div>
+          <div class="proto-feat-title">Low Vision &amp; Bilingual</div>
+          <div class="proto-feat-body">VoiceOver-optimized screen with 18px+ labels and 12:1 contrast. Full EN/ES toggle across all form fields and navigation — serving Carlos, Ana, and Jim.</div>
+        </div>
+        <div class="proto-feature reveal reveal-delay-4">
+          <div class="proto-feat-label">Screen 07</div>
+          <div class="proto-feat-title">Contact &amp; Inquiry</div>
+          <div class="proto-feat-body">Pre-detailed inquiry form with budget, project type, timeline, and style clusters — grouped by Gestalt proximity to reduce cognitive load.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DESIGN SYSTEM ═══ -->
+<section class="design-section" id="design" aria-label="Design System">
+  <div class="design-inner">
+    <div class="design-header">
+      <p class="section-label reveal">Design System</p>
+      <h2 class="section-title reveal reveal-delay-1">
+        Luxury meets <em>clarity.</em>
+      </h2>
+      <p class="section-body reveal reveal-delay-2">
+        Every token — color, type, space — communicates premium positioning
+        while guaranteeing inclusivity for all three personas.
+      </p>
+    </div>
+
+    <!-- Color -->
+    <div class="reveal" style="margin-bottom:60px;">
+      <p style="font-family:var(--mono); font-size:10px; letter-spacing:0.25em; text-transform:uppercase; color:var(--stone-500); margin-bottom:16px;">Color Palette</p>
+      <div class="swatch-row" role="list" aria-label="Brand color swatches">
+        <div class="swatch" style="background:#1A1007;" role="listitem" title="Ink Warm #1A1007"><span class="swatch-label">Ink</span></div>
+        <div class="swatch" style="background:#292524;" role="listitem" title="Stone 800"><span class="swatch-label">Stone</span></div>
+        <div class="swatch" style="background:#92400E;" role="listitem" title="Copper #92400E"><span class="swatch-label">Copper</span></div>
+        <div class="swatch" style="background:#D97706;" role="listitem" title="Copper Glow #D97706"><span class="swatch-label">Glow</span></div>
+        <div class="swatch" style="background:#0F6E56;" role="listitem" title="Teal #0F6E56"><span class="swatch-label">Teal</span></div>
+        <div class="swatch" style="background:#F5F0EB;" role="listitem" title="Cream #F5F0EB"><span class="swatch-label" style="color:#78716C;">Cream</span></div>
+      </div>
+    </div>
+
+    <!-- Type specimen -->
+    <div class="type-specimen reveal reveal-delay-1" style="margin-bottom:60px;" aria-label="Typography specimen">
+      <div class="type-row">
+        <span class="type-name">Display</span>
+        <span class="t-display">Bespoke</span>
+        <span class="t-display-i">Living</span>
+      </div>
+      <div class="type-row">
+        <span class="type-name">Heading</span>
+        <span class="t-heading">Cormorant Garamond</span>
+      </div>
+      <div class="type-row">
+        <span class="type-name">Body</span>
+        <span class="t-body">DM Sans — 300 / 400 / 500 — 16px / 1.75lh</span>
+      </div>
+      <div class="type-row">
+        <span class="type-name">Mono</span>
+        <span class="t-mono">DM Mono · Labels · Metadata · Code</span>
+      </div>
+    </div>
+
+    <!-- Design cards -->
+    <div class="design-grid">
+      <div class="design-card reveal">
+        <div class="design-card-icon" aria-hidden="true">🌑</div>
+        <div class="design-card-title">Dark Warm Background</div>
+        <div class="design-card-body">
+          #1A1007 — a near-black warm brown used throughout. Dark backgrounds communicate
+          exclusivity and premium positioning, consistent with luxury real estate and high-end
+          interior brands. 12:1 contrast ratio for all body text.
+        </div>
+      </div>
+      <div class="design-card reveal reveal-delay-1">
+        <div class="design-card-icon" aria-hidden="true">📐</div>
+        <div class="design-card-title">Left Vertical Copper Accent</div>
+        <div class="design-card-body">
+          A consistent copper/terracotta vertical bar anchors every content slide and screen
+          on the left — creating visual continuity and a proprietary brand signature that
+          users recognize across every touchpoint.
+        </div>
+      </div>
+      <div class="design-card reveal reveal-delay-2">
+        <div class="design-card-icon" aria-hidden="true">✍️</div>
+        <div class="design-card-title">Serif + Sans Pairing</div>
+        <div class="design-card-body">
+          Cormorant Garamond for display and headings — timeless, editorial, warm.
+          DM Sans for body and UI — clean, modern, accessible. The pairing communicates
+          both heritage craftsmanship and digital precision.
+        </div>
+      </div>
+      <div class="design-card reveal reveal-delay-3">
+        <div class="design-card-icon" aria-hidden="true">🎯</div>
+        <div class="design-card-title">Copper as Interaction Signal</div>
+        <div class="design-card-body">
+          All interactive elements — CTAs, form fields, navigation links, and accents —
+          use copper consistently. Users learn in seconds that copper means "act here."
+          This leverages Gestalt Similarity for zero learning curve.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GESTALT PRINCIPLES ═══ -->
+<section class="principles-section" aria-label="Design Principles">
+  <div class="principles-inner">
+    <p class="section-label reveal">Gestalt Applied</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      Visual psychology<br>drives <em>every</em> decision.
+    </h2>
+    <p class="section-body reveal reveal-delay-2">
+      Classic perceptual principles govern layout, grouping, and hierarchy —
+      reducing cognitive load and guiding all three personas naturally through each flow.
+    </p>
+
+    <div class="principles-scroll">
+      <div class="principle-block reveal">
+        <div class="principle-bg-num" aria-hidden="true">01</div>
+        <div class="principle-label">Proximity</div>
+        <div class="principle-title">Grouped Form Clusters</div>
+        <div class="principle-body">
+          On the inquiry form, personal details (name, email, phone) form one cluster;
+          project details (type, budget, timeline) a second. Users perceive each cluster
+          as a unit — reducing cognitive load and increasing completion rates.
+        </div>
+      </div>
+      <div class="principle-block reveal reveal-delay-1">
+        <div class="principle-bg-num" aria-hidden="true">02</div>
+        <div class="principle-label">Similarity</div>
+        <div class="principle-title">Copper = Interactive</div>
+        <div class="principle-body">
+          Every interactive element shares the copper accent color. Users recognize
+          immediately that copper means "tap here" — no labels required. A consistent
+          visual grammar that works for Meg, Carlos, and Jim alike.
+        </div>
+      </div>
+      <div class="principle-block reveal reveal-delay-2">
+        <div class="principle-bg-num" aria-hidden="true">03</div>
+        <div class="principle-label">Figure / Ground</div>
+        <div class="principle-title">Dark Field Hierarchy</div>
+        <div class="principle-body">
+          Dark background creates a clear figure-ground separation. Content cards and
+          CTA buttons sit as foreground figures. The depth layering lets users focus on
+          what matters without visual noise.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ITERATIVE DESIGN CHANGES ═══ -->
+<section class="changes-section" aria-label="Iterative Design Changes">
+  <div class="changes-inner">
+    <p class="section-label reveal">Iterative Design</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      Two changes.<br><em>Every persona</em> served.
+    </h2>
+    <p class="section-body reveal reveal-delay-2">
+      Usability testing revealed two critical gaps. Both were addressed before
+      the high-fidelity prototype — task completion jumped to 100%.
+    </p>
+
+    <div class="changes-cols">
+      <div class="change-block reveal reveal-delay-1">
+        <div class="change-header">
+          <div class="change-num">01</div>
+          <div class="change-head-title">Language Toggle Added</div>
+        </div>
+        <div class="change-body">
+          <div class="change-before">
+            <div class="change-label">Before — Original Design</div>
+            <div class="change-text">English-only inquiry form. Assumption: luxury positioning implied English-speaking audience. Carlos noted it "felt like it wasn't built for us."</div>
+          </div>
+          <div class="change-after">
+            <div class="change-label">After — Revised Design</div>
+            <div class="change-text">Full EN/ES toggle in the navigation bar. All form fields, labels, and CTAs switch language. Bilingual inquiry submissions increased immediately in Round 2 testing.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-block reveal reveal-delay-2">
+        <div class="change-header">
+          <div class="change-num">02</div>
+          <div class="change-head-title">Budget Field + Accessible Labels</div>
+        </div>
+        <div class="change-body">
+          <div class="change-before">
+            <div class="change-label">Before — Original Design</div>
+            <div class="change-text">No budget range field on inquiry form. 9px form labels failed VoiceOver testing. Jim Harrington could not complete the form independently.</div>
+          </div>
+          <div class="change-after">
+            <div class="change-label">After — Revised Design</div>
+            <div class="change-text">Budget tier selector added. All labels raised to 14px minimum with WCAG AA contrast. VoiceOver task completion rate: 100% in Round 2. Form completion rate: 100% across all personas.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURE-TO-PERSONA MATRIX ═══ -->
+<section class="matrix-section" aria-label="Feature to Persona Matrix">
+  <div class="matrix-inner">
+    <p class="section-label reveal" style="justify-content:center;">Design Alignment</p>
+    <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">
+      Every feature.<br><em>Every persona.</em>
+    </h2>
+    <p class="section-body reveal reveal-delay-2" style="margin:0 auto; text-align:center;">
+      Inclusive design is not an afterthought — it is the architecture.
+    </p>
+
+    <table class="matrix-table reveal reveal-delay-2" role="table" aria-label="Feature to persona mapping">
+      <thead>
+        <tr>
+          <th scope="col" style="text-align:left;">Feature</th>
+          <th scope="col">Meg</th>
+          <th scope="col">Carlos &amp; Ana</th>
+          <th scope="col">Jim</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Filterable Portfolio Browser</td>
+          <td class="check">✦</td>
+          <td class="dash">—</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>Pre-Detailed Inquiry Form</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>EN / ES Language Toggle</td>
+          <td class="dash">—</td>
+          <td class="check">✦</td>
+          <td class="dash">—</td>
+        </tr>
+        <tr>
+          <td>VoiceOver / Screen Reader Support</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>Budget Tier Selector</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>Client Project Dashboard</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>Document Vault &amp; E-Signature</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>High Contrast Mode</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td class="check">✦</td>
+        </tr>
+        <tr>
+          <td>Compliance &amp; Permit Tracker</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+          <td class="check">✦</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══ NEXT STEPS ═══ -->
+<section class="nextsteps-section" id="nextsteps" aria-label="Next Steps Roadmap">
+  <div class="nextsteps-inner">
+    <div class="nextsteps-header">
+      <p class="section-label reveal" style="justify-content:center;">Investor Roadmap</p>
+      <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">
+        Three steps to<br><em>market launch.</em>
+      </h2>
+      <p class="section-body reveal reveal-delay-2" style="margin:0 auto; text-align:center;">
+        From validated prototype to a live Tri-State platform —
+        a disciplined, phased approach with measurable milestones.
+      </p>
+    </div>
+
+    <div class="steps-timeline">
+      <div class="step-row reveal">
+        <div class="step-num" aria-label="Step 1">01</div>
+        <div class="step-content">
+          <div class="step-tag">Phase 1 · Q1 2026</div>
+          <div class="step-title">Extended Usability Testing</div>
+          <div class="step-body">
+            Conduct high-fidelity usability testing with 10+ participants across all three persona groups.
+            Focus on screen reader flow completion, bilingual form submission accuracy, and client dashboard
+            task completion. Validate the 100% completion rate achieved in Round 2 at scale.
+          </div>
+          <div class="step-metric">
+            <span>Target:</span> 95%+ task completion across all 3 personas
+          </div>
+        </div>
+      </div>
+
+      <div class="step-row reveal reveal-delay-1">
+        <div class="step-num" aria-label="Step 2">02</div>
+        <div class="step-content">
+          <div class="step-tag">Phase 2 · Q2 2026</div>
+          <div class="step-title">Client Portal &amp; Admin Dashboard — Full Hi-Fi</div>
+          <div class="step-body">
+            Develop the client portal and admin dashboard to full high-fidelity. Implement real project
+            tracking, document e-signing, permit milestone notifications, and the compliance credential
+            display. Build the admin-side contractor workflow: project intake, client assignment, and
+            permit status automation.
+          </div>
+          <div class="step-metric">
+            <span>Deliverable:</span> Full interactive prototype · Client + Admin
+          </div>
+        </div>
+      </div>
+
+      <div class="step-row reveal reveal-delay-2">
+        <div class="step-num" aria-label="Step 3">03</div>
+        <div class="step-content">
+          <div class="step-tag">Phase 3 · Q3 2026</div>
+          <div class="step-title">Live Platform Launch</div>
+          <div class="step-body">
+            Partner with the Remodel NYC+CT contractor to launch the production platform.
+            Track inquiry completion rate, bilingual form submissions, and accessibility task-completion
+            as primary success metrics. Implement A/B testing on the portfolio filter and inquiry form
+            to optimize conversion. Target markets: Greenwich, CT → Westchester → NYC boroughs.
+          </div>
+          <div class="step-metric">
+            <span>KPIs:</span> Inquiry completion · Bilingual % · Accessibility pass rate
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ VIDEO SHOWCASE ═══ -->
+<section class="video-section" id="videos" aria-label="Platform Video Walkthroughs">
+  <div class="video-inner">
+    <div class="video-header">
+      <p class="section-label reveal" style="justify-content:center;">Platform Walkthroughs</p>
+      <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">
+        See it in <em>motion.</em>
+      </h2>
+      <p class="section-body reveal reveal-delay-2" style="margin:0 auto; text-align:center;">
+        Full end-to-end walkthroughs of the public website and admin dashboard —
+        showing every user flow from discovery to project completion.
+      </p>
+    </div>
+
+    <div class="video-grid">
+
+      <!-- VIDEO 01 — Public Website -->
+      <div class="video-card reveal">
+        <div class="video-frame-wrap" id="video-wrap-1">
+          <div class="video-placeholder" id="placeholder-1" onclick="loadVideo(1)" role="button" tabindex="0" aria-label="Play public website walkthrough video" onkeydown="if(event.key==='Enter')loadVideo(1)">
+            <!-- Decorative background grid -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.04;" xmlns="http://www.w3.org/2000/svg">
+              <defs><pattern id="g1" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#fff" stroke-width="0.5"/></pattern></defs>
+              <rect width="100%" height="100%" fill="url(#g1)"/>
+            </svg>
+            <!-- Decorative label -->
+            <div style="position:absolute;top:16px;left:16px;font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--copper-glow);background:rgba(146,64,14,0.15);border:1px solid rgba(146,64,14,0.3);padding:4px 10px;border-radius:2px;">
+              Public Website
+            </div>
+            <div class="video-play-btn" aria-hidden="true">
+              <div class="video-play-icon"></div>
+            </div>
+            <span class="video-placeholder-label">Click to load video</span>
+            <!-- Decorative screen preview hint -->
+            <div style="position:absolute;bottom:20px;right:20px;width:90px;height:54px;border:1px solid rgba(255,255,255,0.08);border-radius:4px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;">
+              <div style="font-size:9px;color:var(--stone-600);font-family:var(--mono);letter-spacing:0.1em;">16:9</div>
+            </div>
+          </div>
+          <!-- Video loads here on click — replace src with your actual video URL or file -->
+          <!-- <video id="vid-1" controls style="display:none;position:absolute;inset:0;width:100%;height:100%;"></video> -->
+        </div>
+        <div class="video-card-body">
+          <div class="video-card-tag">Walkthrough 01 · Public Site</div>
+          <div class="video-card-title">Portfolio Browser &amp; Inquiry Flow</div>
+          <div class="video-card-body-text">
+            Full prospect journey: homepage hero → portfolio filtering by project type →
+            project detail view → bilingual inquiry form → confirmation screen.
+            Demonstrates Meg Thompson's complete user flow.
+          </div>
+          <a href="http://localhost/Remodeling_web/index.php" class="video-cta-btn" aria-label="Visit the Remodel NYC+CT live website">
+            <span>Visit Live Website</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M1 7H13M13 7L7 1M13 7L7 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- VIDEO 02 — Admin Dashboard -->
+      <div class="video-card reveal reveal-delay-1">
+        <div class="video-frame-wrap" id="video-wrap-2">
+          <div class="video-placeholder" id="placeholder-2" onclick="loadVideo(2)" role="button" tabindex="0" aria-label="Play admin dashboard walkthrough video" onkeydown="if(event.key==='Enter')loadVideo(2)">
+            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.04;" xmlns="http://www.w3.org/2000/svg">
+              <defs><pattern id="g2" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#fff" stroke-width="0.5"/></pattern></defs>
+              <rect width="100%" height="100%" fill="url(#g2)"/>
+            </svg>
+            <div style="position:absolute;top:16px;left:16px;font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);background:rgba(15,110,86,0.12);border:1px solid rgba(15,110,86,0.3);padding:4px 10px;border-radius:2px;">
+              Admin Dashboard
+            </div>
+            <div class="video-play-btn" style="border-color:rgba(15,110,86,0.6);background:rgba(15,110,86,0.2);" aria-hidden="true">
+              <div class="video-play-icon"></div>
+            </div>
+            <span class="video-placeholder-label">Click to load video</span>
+            <div style="position:absolute;bottom:20px;right:20px;width:90px;height:54px;border:1px solid rgba(255,255,255,0.08);border-radius:4px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;">
+              <div style="font-size:9px;color:var(--stone-600);font-family:var(--mono);letter-spacing:0.1em;">16:9</div>
+            </div>
+          </div>
+        </div>
+        <div class="video-card-body">
+          <div class="video-card-tag">Walkthrough 02 · Admin Side</div>
+          <div class="video-card-title">Project Management &amp; Client Portal</div>
+          <div class="video-card-body-text">
+            Admin-side workflow: project intake → client assignment → permit milestone
+            tracking → document vault management → compliance credential display.
+            Demonstrates the full contractor operations flow.
+          </div>
+          <a href="http://localhost/Remodeling_web/admin_portal/index.php" class="video-cta-btn video-cta-btn--teal" aria-label="Access the Remodel NYC+CT admin portal">
+            <span>Access Admin Portal</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M1 7H13M13 7L7 1M13 7L7 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /video-grid -->
+  </div>
+</section>
+
+<!-- ═══ CLOSING ═══ -->
+<section class="closing-section" aria-label="Project closing and contact">
+  <div style="position:relative; z-index:1;">
+    <p class="section-label reveal" style="justify-content:center; margin-bottom:28px;">Developed by</p>
+    <h2 class="closing-title reveal reveal-delay-1">
+      Juan Carlos<br><em>Diego Angulo</em>
+    </h2>
+    <p class="closing-sub reveal reveal-delay-2">
+      Google UX Design Certificate · Lead UX Designer &amp; Web/App Architect
+      for Remodel NYC+CT. Open to feedback, collaboration, and new opportunities.
+    </p>
+    <div class="reveal reveal-delay-3">
+      <a href="mailto:juan.diego@ctstate.edu" class="btn-primary" style="margin-right:12px;">
+        Get In Touch
+      </a>
+      <a href="#prototype" class="btn-ghost">View Prototype</a>
+    </div>
+
+    <div class="closing-meta reveal reveal-delay-4">
+      <div class="meta-item">
+        <span class="meta-label">Credential</span>
+        <span class="meta-value">Google UX Design Certificate</span>
+      </div>
+      <div class="meta-divider" aria-hidden="true"></div>
+      <div class="meta-item">
+        <span class="meta-label">Project</span>
+        <span class="meta-value">Remodel NYC+CT</span>
+      </div>
+      <div class="meta-divider" aria-hidden="true"></div>
+      <div class="meta-item">
+        <span class="meta-label">Duration</span>
+        <span class="meta-value">January – May 2026</span>
+      </div>
+      <div class="meta-divider" aria-hidden="true"></div>
+      <div class="meta-item">
+        <span class="meta-label">Accessibility</span>
+        <span class="meta-value">WCAG 2.1 AA · EN/ES</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer role="contentinfo">
+  <p class="footer-copy">© 2026 Juan Carlos Diego Angulo · Remodel NYC+CT UX Case Study</p>
+  <nav class="footer-links" aria-label="Footer links">
+    <a href="#overview">Overview</a>
+    <a href="#personas">Personas</a>
+    <a href="#prototype">Prototype</a>
+    <a href="#nextsteps">Roadmap</a>
+  </nav>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════ -->
+<script>
+/* ── Custom Cursor ── */
+const cursor = document.getElementById('cursor');
+let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+});
+document.querySelectorAll('a, button, .persona-card, .design-card, .proto-feature, .swatch').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('expanded'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('expanded'));
+});
+function animateCursor() {
+  curX += (mouseX - curX) * 0.12;
+  curY += (mouseY - curY) * 0.12;
+  cursor.style.left = curX + 'px';
+  cursor.style.top  = curY + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+/* ── Intersection Observer — Reveal ── */
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+/* ── Smooth Scroll for nav links ── */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const id = link.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+/* ── Nav background opacity on scroll ── */
+const nav = document.querySelector('.nav');
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY > 60;
+  nav.style.background = scrolled
+    ? 'rgba(15,14,13,0.95)'
+    : 'rgba(15,14,13,0.7)';
+}, { passive: true });
+
+/* ── Stat counter animation ── */
+function animateCount(el, target, duration = 1600) {
+  const isPercent = el.innerHTML.includes('%');
+  const hasSup = el.querySelector('sup');
+  let start = null;
+  const step = (ts) => {
+    if (!start) start = ts;
+    const progress = Math.min((ts - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const val = Math.round(eased * target);
+    el.innerHTML = hasSup
+      ? `${val}<sup>${hasSup.textContent}</sup>`
+      : (isPercent ? `${val}%` : `${val}`);
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const numEl = entry.target.querySelector('.stat-num');
+      if (!numEl) return;
+      const raw = numEl.textContent.trim();
+      const target = parseInt(raw.replace(/[^0-9]/g, ''));
+      if (!isNaN(target)) animateCount(numEl, target);
+      statObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-item').forEach(el => statObserver.observe(el));
+
+
+/* ── Video Placeholder Click Handler ── */
+const VIDEO_PATHS = {
+  1: 'assets/img/video1.mp4',
+  2: 'assets/img/video2.mp4'
+};
+
+function loadVideo(n) {
+  const placeholder = document.getElementById('placeholder-' + n);
+  const wrap = document.getElementById('video-wrap-' + n);
+  if (!placeholder || !wrap) return;
+
+  // Create native video element
+  const video = document.createElement('video');
+  video.src = VIDEO_PATHS[n];
+  video.controls = true;
+  video.autoplay = true;
+  video.playsInline = true;
+  video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;background:#000;border-radius:0;display:block;';
+  video.setAttribute('aria-label', n === 1 ? 'Remodel NYC+CT public website walkthrough' : 'Remodel NYC+CT admin dashboard walkthrough');
+
+  // Handle missing file gracefully
+  video.onerror = () => {
+    placeholder.querySelector('.video-placeholder-label').textContent = 'Video not found — place ' + VIDEO_PATHS[n] + ' in the project folder';
+    placeholder.querySelector('.video-placeholder-label').style.color = 'var(--copper-glow)';
+    wrap.removeChild(video);
+  };
+
+  wrap.appendChild(video);
+  placeholder.style.opacity = '0';
+  placeholder.style.pointerEvents = 'none';
+  setTimeout(() => { placeholder.style.display = 'none'; }, 300);
+}
+
+/* ── Responsive grid fix ── */
+function checkGrid() {
+  const grid = document.querySelector('.responsive-grid-2');
+  if (!grid) return;
+  grid.style.gridTemplateColumns = window.innerWidth < 900 ? '1fr' : '1fr 1fr';
+}
+window.addEventListener('resize', checkGrid);
+checkGrid();
+</script>
+
+</body>
+</html>

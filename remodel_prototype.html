@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remodel NYC+CT — iPhone Prototype v2 · By DRK94</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════════
+     PREFERS-REDUCED-MOTION  (Elena / wellness users)
+     All transitions become instant when user has this set.
+════════════════════════════════════════════════════════════ -->
+<style>
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --amber:        #92400E;
+  --amber-lt:     #B45309;
+  --amber-pale:   #FAEEDA;
+  --stone-950:    #1C1917;
+  --stone-800:    #292524;
+  --stone-600:    #57534E;
+  --stone-400:    #A8A29E;
+  --stone-200:    #E7E2DC;
+  --stone-100:    #F5F0EB;
+  --stone-50:     #FCFAF8;
+  --teal:         #0F6E56;
+  --bg:           #0F0E0D;
+  --serif:        'Playfair Display', Georgia, serif;
+  --sans:         'DM Sans', system-ui, sans-serif;
+  --mono:         'DM Mono', monospace;
+
+  /* Accessibility overrides — toggled by JS */
+  --a11y-font-scale: 1;
+  --a11y-lh: 1.6;
+}
+
+/* HIGH CONTRAST mode overrides */
+body.hc-mode {
+  --stone-950:  #000000;
+  --stone-800:  #111111;
+  --stone-600:  #222222;
+  --stone-400:  #444444;
+  --stone-200:  #CCCCCC;
+  --stone-100:  #EEEEEE;
+  --stone-50:   #FFFFFF;
+  --amber:      #C05300;
+  --amber-lt:   #D97706;
+  --amber-pale: #FFF3CD;
+  --teal:       #065F46;
+  --bg:         #000000;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: calc(16px * var(--a11y-font-scale));
+}
+html, body {
+  height: 100%;
+  font-family: var(--sans);
+  background: var(--bg);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE SHELL
+═══════════════════════════════════════════ */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(146,64,14,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(15,110,86,.12) 0%, transparent 60%),
+    var(--bg);
+  padding: 32px 20px 60px;
+}
+
+/* Zco header bar */
+.zco-header {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.zco-logo { display: flex; align-items: center; gap: 10px; }
+.zco-badge {
+  background: var(--amber);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 3px;
+  letter-spacing: .08em;
+}
+.zco-name    { font-size: 11px; color: var(--stone-400); letter-spacing: .18em; text-transform: uppercase; }
+.zco-project { font-size: 11px; color: var(--stone-600); letter-spacing: .12em; text-transform: uppercase; }
+
+/* Version badge */
+.version-badge {
+  background: rgba(15,110,86,.2);
+  border: 1px solid rgba(15,110,86,.4);
+  color: #6EE7B7;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 10px;
+  font-family: var(--mono);
+  letter-spacing: .06em;
+}
+
+/* Page title block */
+.title-block { text-align: center; margin-bottom: 36px; }
+.title-block h1 {
+  font-family: var(--serif);
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.15;
+}
+.title-block h1 em { color: var(--amber-lt); font-style: italic; }
+.title-block p { font-size: 13px; color: var(--stone-400); letter-spacing: .06em; }
+
+/* ── OUTER A11Y TOOLBAR (lives outside the phone) ── */
+.outer-a11y-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 18px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+}
+.oab-label {
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--stone-400);
+  font-weight: 600;
+  margin-right: 4px;
+}
+.oab-btn {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.6);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.oab-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
+.oab-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+.oab-divider { width: 1px; height: 20px; background: rgba(255,255,255,.08); flex-shrink: 0; }
+
+/* Screen nav pills */
+.screen-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
+}
+.screen-pill {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--stone-400);
+  font-size: 11px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: var(--sans);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  min-height: 34px;        /* FIX: minimum touch target */
+}
+.screen-pill:hover        { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.15); }
+.screen-pill.active       { background: var(--amber); border-color: var(--amber); color: #fff; }
+.screen-pill.pill-a11y    { border-color: rgba(15,110,86,.4); color: #6EE7B7; }
+.screen-pill.pill-a11y.active { background: var(--teal); border-color: var(--teal); }
+.screen-pill.pill-lang    { border-color: rgba(180,83,9,.4); color: #FBD38D; }
+.screen-pill.pill-lang.active { background: var(--amber); border-color: var(--amber); }
+.screen-pill.pill-sign    { border-color: rgba(146,64,14,.4); color: #B45309; }
+
+/* ═══════════════════════════════════════════
+   IPHONE 15 PRO FRAME
+═══════════════════════════════════════════ */
+.device-wrap { position: relative; display: flex; justify-content: center; align-items: flex-start; }
+
+.iphone {
+  position: relative;
+  width: 375px;
+  height: 780px;
+  flex-shrink: 0;
+}
+.iphone-chassis {
+  position: absolute;
+  inset: 0;
+  border-radius: 54px;
+  background: linear-gradient(145deg, #3A3632 0%, #1E1C1A 40%, #2A2725 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.12),
+    0 0 0 2px rgba(0,0,0,.8),
+    0 40px 120px rgba(0,0,0,.9),
+    0 0 60px rgba(146,64,14,.15),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn-side { position: absolute; background: linear-gradient(180deg,#2E2B28 0%,#1A1816 100%); border-radius: 2px; }
+.btn-vol-up   { left:-3px;  top:140px; width:4px; height:36px; border-radius:2px 0 0 2px; }
+.btn-vol-down { left:-3px;  top:188px; width:4px; height:36px; border-radius:2px 0 0 2px; }
+.btn-mute     { left:-3px;  top:104px; width:4px; height:26px; border-radius:2px 0 0 2px; }
+.btn-power    { right:-3px; top:156px; width:4px; height:60px; border-radius:0 2px 2px 0; }
+
+.iphone-bezel { position:absolute; inset:10px; border-radius:46px; background:#000; overflow:hidden; }
+.dynamic-island {
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:120px; height:34px; background:#000; border-radius:20px; z-index:100;
+  box-shadow:0 0 0 1px rgba(255,255,255,.05);
+}
+.screen-viewport {
+  position:absolute; inset:0; border-radius:46px; overflow:hidden;
+  background: var(--stone-50);
+  cursor: grab;
+}
+.screen-viewport:active { cursor: grabbing; }
+
+.swipe-track {
+  display:flex; height:100%;
+  transition: transform .42s cubic-bezier(.4,.0,.2,1);
+  will-change: transform;
+}
+/* FIX: each screen is exactly viewport width, no overflow leaks */
+.app-screen {
+  width: 375px;
+  height: 780px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  background: var(--stone-50);
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+}
+
+/* ═══════════════════════════════════════════
+   STATUS BAR  (reused across all screens)
+═══════════════════════════════════════════ */
+.status-bar {
+  height: 54px; background: var(--stone-950); flex-shrink:0;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 28px 8px; position:relative; z-index:10;
+}
+.status-time { font-size:15px; font-weight:600; color:#fff; letter-spacing:-.02em; }
+.status-icons { display:flex; align-items:center; gap:6px; }
+.s-signal { width:17px; height:12px; }
+.s-wifi   { width:16px; height:12px; }
+.s-batt   { width:25px; height:12px; }
+
+/* ═══════════════════════════════════════════
+   GLOBAL NAV / PORTAL HEADER
+═══════════════════════════════════════════ */
+.top-nav {
+  background:var(--stone-950); padding:10px 20px 12px;
+  display:flex; justify-content:space-between; align-items:center; flex-shrink:0;
+}
+.nav-brand { font-size:10px; font-weight:700; letter-spacing:.22em; color:#fff; text-transform:uppercase; }
+.nav-burger { display:flex; flex-direction:column; gap:4px; cursor:pointer; }
+.nav-burger span { display:block; width:20px; height:1.5px; background:var(--stone-400); border-radius:1px; }
+
+.portal-hdr {
+  background:var(--stone-950); padding:10px 20px 12px;
+  display:flex; justify-content:space-between; align-items:center; flex-shrink:0;
+}
+.portal-title { font-size:13px; font-weight:600; color:#fff; }
+.portal-sub   { font-size:10px; color:var(--stone-400); margin-top:1px; letter-spacing:.04em; }
+.portal-user  { font-size:11px; color:var(--amber-lt); font-weight:500; }
+
+/* ═══════════════════════════════════════════
+   BOTTOM TAB BAR
+═══════════════════════════════════════════ */
+.bottom-nav {
+  background:var(--stone-950); border-top:1px solid #2D2A27;
+  display:flex; flex-shrink:0; margin-top:auto; padding-bottom:8px;
+}
+/* FIX: minimum 44px touch target per WCAG 2.5.5 */
+.tab-item {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:8px 4px 4px; gap:3px; cursor:pointer; position:relative;
+  min-height:44px;
+}
+.tab-icon  { font-size:18px; line-height:1; }
+.tab-label { font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--stone-600); transition:color .2s; }
+.tab-item.active .tab-label { color:var(--amber-lt); }
+.tab-item.active .tab-icon  { filter:drop-shadow(0 0 6px rgba(180,83,9,.5)); }
+.tab-badge {
+  position:absolute; top:6px; right:calc(50% - 18px);
+  background:var(--amber); color:#fff;
+  font-size:8px; font-weight:700;
+  width:14px; height:14px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  border:1.5px solid var(--stone-950);
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN 1 · HOMEPAGE HERO
+═══════════════════════════════════════════ */
+.hero-img {
+  height:240px; background:linear-gradient(180deg,#B8AD9E 0%,#9E9187 60%,#7D7268 100%);
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.hero-img-photo { width:100%; height:100%; object-fit:cover; opacity:.85; pointer-events:none; }
+.hero-gradient-overlay { position:absolute; inset:0; background:linear-gradient(180deg,rgba(28,25,23,.2) 0%,rgba(28,25,23,.6) 100%); }
+.hero-chip {
+  position:absolute; bottom:16px; left:16px;
+  background:rgba(252,250,248,.96); padding:8px 12px;
+  border-left:3px solid var(--amber); backdrop-filter:blur(8px);
+}
+.hero-chip-eye  { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--stone-400); margin-bottom:2px; }
+.hero-chip-name { font-family:var(--serif); font-style:italic; font-size:13px; color:var(--stone-950); }
+
+.hero-body   { padding:20px 20px 16px; background:var(--stone-50); }
+.hero-eyebrow { font-size:9px; letter-spacing:.24em; text-transform:uppercase; color:var(--amber); font-weight:600; margin-bottom:8px; }
+.hero-h1 { font-family:var(--serif); font-size:32px; line-height:1.1; color:var(--stone-950); margin-bottom:10px; }
+.hero-h1 em { color:var(--amber); font-style:italic; }
+.hero-sub { font-size:13px; color:var(--stone-600); line-height:1.6; margin-bottom:16px; }
+.hero-btns { display:flex; gap:10px; }
+
+/* FIX: all buttons have min 44px height per WCAG */
+.btn-primary {
+  background:var(--amber); color:#fff; font-size:10px; font-weight:600;
+  padding:11px 18px; letter-spacing:.12em; text-transform:uppercase;
+  border-radius:3px; flex:1; text-align:center; cursor:pointer;
+  transition:background .2s; border:none; min-height:44px;
+}
+.btn-primary:hover { background:var(--amber-lt); }
+.btn-ghost {
+  background:transparent; color:var(--stone-600); font-size:10px; font-weight:500;
+  padding:11px 16px; letter-spacing:.1em; text-transform:uppercase;
+  border-radius:3px; border:1px solid var(--stone-200); cursor:pointer;
+  transition:all .2s; min-height:44px;
+}
+.btn-ghost:hover { border-color:var(--stone-400); color:var(--stone-950); }
+
+.reviews-section { background:var(--stone-100); padding:16px 20px; flex:1; overflow-y:auto; }
+.reviews-label { font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--stone-600); margin-bottom:12px; font-weight:600; }
+.review-card {
+  background:#fff; padding:14px; border-left:3px solid var(--amber);
+  margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,.06);
+}
+.review-card:last-child { margin-bottom:0; border-left-color:var(--stone-200); }
+.review-stars  { color:#D97706; font-size:12px; margin-bottom:6px; letter-spacing:2px; }
+.review-quote  { font-size:12px; color:var(--stone-600); line-height:1.6; font-style:italic; margin-bottom:6px; }
+.review-author { font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--stone-400); font-weight:700; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 2 · PROGRESS DASHBOARD
+═══════════════════════════════════════════ */
+.prog-body { padding:16px 20px; flex:1; overflow-y:auto; background:var(--stone-50); }
+.prog-eye  { font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); font-weight:600; margin-bottom:3px; }
+.prog-name { font-family:var(--serif); font-size:18px; color:var(--stone-950); margin-bottom:14px; }
+
+.stat-row { display:flex; gap:8px; margin-bottom:16px; }
+.stat-card {
+  flex:1; background:#fff; border:1px solid var(--stone-200);
+  padding:10px 8px; text-align:center; border-radius:4px;
+}
+.stat-label { font-size:8px; letter-spacing:.12em; text-transform:uppercase; color:var(--stone-400); margin-bottom:4px; }
+.stat-val   { font-size:18px; font-weight:600; color:var(--stone-950); line-height:1; }
+.stat-val.sm { font-size:13px; }
+
+.phase-section { margin-bottom:16px; }
+.section-label { font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-400); font-weight:600; margin-bottom:10px; }
+.phase-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.phase-name  { font-size:11px; color:var(--stone-600); width:70px; flex-shrink:0; }
+.phase-track { flex:1; height:4px; background:var(--stone-200); border-radius:2px; overflow:hidden; }
+.phase-fill  { height:100%; border-radius:2px; transition:width 1.2s cubic-bezier(.4,0,.2,1); }
+.phase-pct   { font-size:10px; color:var(--stone-400); width:28px; text-align:right; font-family:var(--mono); }
+
+.tl-section { margin-top:4px; }
+.tl-item { display:flex; gap:12px; margin-bottom:14px; }
+.tl-dot-done {
+  width:10px; height:10px; border-radius:50%; background:var(--teal);
+  flex-shrink:0; margin-top:3px; box-shadow:0 0 0 3px rgba(15,110,86,.15);
+}
+.tl-dot-upcoming {
+  width:10px; height:10px; border-radius:50%;
+  border:2px solid #D6D3D1; flex-shrink:0; margin-top:3px; background:transparent;
+}
+.tl-date  { font-size:9px; color:var(--stone-400); font-family:var(--mono); margin-bottom:2px; }
+.tl-title { font-size:12px; color:var(--stone-950); font-weight:500; margin-bottom:3px; }
+.tl-note  { font-size:11px; color:var(--stone-600); line-height:1.5; margin-bottom:5px; }
+.tl-thumbs { display:flex; gap:4px; }
+.tl-thumb {
+  width:52px; height:36px; background:var(--stone-200); border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:8px; color:var(--stone-400); letter-spacing:.06em;
+}
+
+/* animate phase bars on arrival */
+@keyframes phase-grow { from { width: 0 !important; } }
+.animate-phases .phase-fill { animation: phase-grow .8s cubic-bezier(.4,0,.2,1) forwards; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 3 · MESSAGES
+═══════════════════════════════════════════ */
+.chat-agent-bar {
+  background:#fff; border-bottom:1px solid var(--stone-200);
+  padding:12px 20px; display:flex; align-items:center; gap:12px; flex-shrink:0;
+}
+.agent-avatar {
+  width:38px; height:38px; border-radius:50%; background:var(--stone-200);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:var(--stone-600); flex-shrink:0;
+}
+.agent-name   { font-size:13px; font-weight:600; color:var(--stone-950); }
+.agent-status { font-size:10px; color:var(--teal); font-weight:500; }
+
+.messages-body {
+  flex:1; overflow-y:auto; padding:16px 20px;
+  display:flex; flex-direction:column; gap:12px; background:var(--stone-100);
+}
+.msg-time { font-size:9px; color:var(--stone-400); text-align:center; margin:4px 0 8px; letter-spacing:.08em; font-family:var(--mono); }
+.bubble-wrap { display:flex; align-items:flex-end; gap:6px; }
+.bubble-wrap.mine { flex-direction:row-reverse; }
+.bubble-avatar-sm {
+  width:22px; height:22px; border-radius:50%; background:var(--stone-200);
+  display:flex; align-items:center; justify-content:center;
+  font-size:8px; font-weight:700; color:var(--stone-600); flex-shrink:0;
+}
+.bubble { padding:10px 14px; font-size:13px; line-height:1.5; max-width:240px; border-radius:16px; }
+.bubble.theirs { background:#fff; color:var(--stone-800); border-radius:4px 16px 16px 16px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.bubble.mine   { background:var(--amber); color:#fff; border-radius:16px 4px 16px 16px; }
+
+.chat-input-bar {
+  background:#fff; border-top:1px solid var(--stone-200);
+  padding:10px 16px 18px; display:flex; gap:10px; align-items:center; flex-shrink:0;
+}
+.chat-input {
+  flex:1; background:var(--stone-100); border:1px solid var(--stone-200);
+  border-radius:20px; padding:9px 16px; font-size:13px; color:var(--stone-400);
+  font-family:var(--sans); outline:none;
+}
+/* FIX: send button meets 44px touch target */
+.chat-send {
+  background:var(--amber); color:#fff;
+  width:44px; height:44px; border-radius:50%;
+  border:none; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; flex-shrink:0; font-size:14px; transition:background .2s;
+}
+.chat-send:hover { background:var(--amber-lt); }
+
+/* ═══════════════════════════════════════════
+   SCREEN 4 · DOCUMENT VAULT
+═══════════════════════════════════════════ */
+.docs-body { padding:16px 20px; flex:1; overflow-y:auto; background:var(--stone-50); }
+.docs-title { font-family:var(--serif); font-size:20px; color:var(--stone-950); margin-bottom:14px; }
+
+.upload-zone {
+  border:2px dashed var(--stone-200); border-radius:6px; padding:20px;
+  text-align:center; margin-bottom:16px; cursor:pointer; transition:border-color .2s;
+  min-height:44px;
+}
+.upload-zone:hover { border-color:var(--amber); }
+.upload-icon  { font-size:24px; color:#D6CFC5; margin-bottom:6px; }
+.upload-title { font-size:12px; color:var(--stone-600); margin-bottom:3px; font-weight:500; }
+.upload-sub   { font-size:10px; color:var(--stone-400); margin-bottom:10px; }
+.upload-btn   {
+  background:var(--amber); color:#fff; font-size:9px;
+  padding:6px 14px; letter-spacing:.12em; text-transform:uppercase;
+  border-radius:3px; display:inline-block; font-weight:600;
+}
+
+.doc-row {
+  display:flex; align-items:center; gap:12px; padding:12px;
+  background:#fff; border:1px solid var(--stone-200); border-radius:4px;
+  margin-bottom:8px; transition:border-color .2s; cursor:pointer;
+  min-height:44px;
+}
+.doc-row:hover { border-color:var(--stone-400); }
+.doc-row.pending { border-color:#F8D5A0; background:#FFFBF5; }
+.doc-icon-box { width:36px; height:36px; background:var(--stone-100); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.doc-icon-box.pending { background:var(--amber-pale); }
+.doc-info { flex:1; min-width:0; }
+.doc-name { font-size:12px; color:var(--stone-950); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.doc-meta { font-size:10px; color:var(--stone-400); margin-top:2px; font-family:var(--mono); }
+.doc-pill { font-size:9px; padding:4px 8px; border-radius:10px; font-weight:700; letter-spacing:.06em; white-space:nowrap; flex-shrink:0; }
+.pill-signed  { background:var(--stone-100); color:var(--stone-600); }
+.pill-pending { background:var(--amber-pale); color:var(--amber); }
+.pill-ok      { background:rgba(15,110,86,.1); color:var(--teal); }
+
+/* ═══════════════════════════════════════════
+   SIGN MODAL (Screen 4 overlay)
+═══════════════════════════════════════════ */
+.sign-overlay {
+  position:absolute; inset:0; background:rgba(15,14,13,.65);
+  display:flex; align-items:flex-end; z-index:50;
+  backdrop-filter:blur(3px);
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.sign-overlay.open { opacity:1; pointer-events:all; }
+
+.sign-sheet {
+  background:var(--stone-50); border-radius:20px 20px 0 0; width:100%;
+  transform:translateY(100%); transition:transform .4s cubic-bezier(.4,0,.2,1);
+  padding-bottom:20px;
+}
+.sign-overlay.open .sign-sheet { transform:translateY(0); }
+
+.sign-handle { width:40px; height:5px; background:var(--stone-200); border-radius:3px; margin:10px auto 14px; }
+.sign-head   { padding:0 20px 14px; border-bottom:1px solid var(--stone-200); }
+.sign-eye    { font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); font-weight:600; margin-bottom:4px; }
+.sign-title  { font-family:var(--serif); font-size:18px; color:var(--stone-950); margin-bottom:2px; }
+.sign-meta   { font-size:11px; color:var(--stone-400); font-family:var(--mono); }
+
+.sign-doc-preview { background:#fff; border:1px solid var(--stone-200); margin:14px 20px; border-radius:4px; padding:14px; position:relative; }
+.sign-doc-badge   { position:absolute; top:10px; right:10px; background:var(--amber-pale); color:var(--amber); font-size:8px; font-weight:700; padding:3px 7px; border-radius:10px; letter-spacing:.08em; text-transform:uppercase; }
+.sign-doc-headline { font-family:var(--serif); font-size:12px; color:var(--stone-950); margin-bottom:10px; }
+.doc-line          { height:3px; background:var(--stone-200); border-radius:2px; margin-bottom:6px; }
+.sign-read-link    { font-size:10px; color:var(--amber); font-weight:600; margin-top:8px; letter-spacing:.04em; }
+
+.sign-field       { padding:0 20px 10px; }
+.sign-field-label { font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-400); font-weight:600; margin-bottom:8px; }
+
+/*  sign pad height increased to 88px for better touch signing */
+.sign-pad {
+  background:#fff; border:1.5px solid var(--stone-200); border-radius:6px;
+  height:88px; position:relative; overflow:hidden; cursor:crosshair; transition:border-color .2s;
+}
+.sign-pad.has-sig { border-color:var(--amber); }
+.sign-pad canvas  { position:absolute; inset:0; width:100%; height:100%; }
+.sign-pad-hint    { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:13px; color:#D6CFC5; font-style:italic; pointer-events:none; }
+
+/*  clear link is now a proper button for accessibility */
+.sign-clear {
+  font-size:10px; color:var(--amber); background:none; border:none; cursor:pointer;
+  display:block; text-align:right; width:100%; margin-top:6px;
+  text-decoration:underline; letter-spacing:.04em; min-height:36px;
+  font-family:var(--sans);
+}
+.sign-date-row  { display:flex; align-items:center; gap:8px; margin-top:10px; }
+.sign-date-label { font-size:11px; color:var(--stone-400); }
+.sign-date-val  { font-size:12px; font-weight:600; color:var(--stone-950); background:var(--stone-100); padding:3px 10px; border-radius:4px; font-family:var(--mono); }
+
+.sign-actions { display:flex; gap:10px; padding:12px 20px 0; }
+.sign-cancel-btn {
+  flex:1; border:1px solid var(--stone-200); background:transparent; color:var(--stone-600);
+  font-size:11px; font-weight:500; padding:12px; border-radius:4px; cursor:pointer;
+  font-family:var(--sans); letter-spacing:.06em; text-transform:uppercase; min-height:44px;
+}
+/*  disabled state uses aria-disabled + visually distinct style */
+.sign-confirm-btn {
+  flex:2; background:var(--stone-200); color:var(--stone-400);
+  font-size:11px; font-weight:700; padding:12px; border-radius:4px; border:none;
+  cursor:not-allowed; font-family:var(--sans); letter-spacing:.1em; text-transform:uppercase;
+  transition:all .2s; min-height:44px; position:relative;
+}
+/* Tooltip microcopy for the disabled state — addresses the usability study finding */
+.sign-confirm-btn::after {
+  content: 'Draw your signature first';
+  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  background:var(--stone-950); color:#fff; font-size:9px; padding:4px 8px;
+  border-radius:4px; white-space:nowrap; opacity:0; pointer-events:none;
+  transition:opacity .2s; letter-spacing:.04em;
+}
+.sign-confirm-btn:not(.enabled):hover::after { opacity:1; }
+.sign-confirm-btn.enabled { background:var(--amber); color:#fff; cursor:pointer; }
+
+/* Success state */
+.sign-success-sheet {
+  background:var(--stone-50); border-radius:20px 20px 0 0; width:100%;
+  padding:28px 24px 30px; text-align:center;
+  transform:translateY(100%); transition:transform .4s cubic-bezier(.4,0,.2,1) .05s;
+}
+.sign-overlay.success .sign-success-sheet { transform:translateY(0); }
+.sign-overlay.success .sign-sheet { display:none; }
+
+.success-check-circle {
+  width:56px; height:56px; border-radius:50%; background:var(--teal);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 14px; font-size:24px; color:#fff;
+  box-shadow:0 0 0 8px rgba(15,110,86,.12);
+}
+.success-title { font-family:var(--serif); font-size:22px; color:var(--stone-950); margin-bottom:6px; }
+.success-sub   { font-size:12px; color:var(--stone-600); line-height:1.6; margin-bottom:16px; }
+.success-doc-pill {
+  background:#fff; border:1px solid var(--stone-200); border-radius:4px;
+  padding:10px 14px; display:flex; align-items:center; gap:10px;
+  text-align:left; margin-bottom:16px;
+}
+.success-doc-icon  { font-size:20px; }
+.success-doc-name  { font-size:12px; font-weight:600; color:var(--stone-950); }
+.success-doc-meta  { font-size:10px; color:var(--stone-400); font-family:var(--mono); margin-top:2px; }
+.success-signed-pill { background:rgba(15,110,86,.1); color:var(--teal); font-size:9px; font-weight:700; padding:3px 8px; border-radius:10px; margin-left:auto; flex-shrink:0; }
+.return-btn {
+  width:100%; background:var(--amber); color:#fff;
+  font-size:11px; font-weight:700; padding:14px; border:none; border-radius:4px;
+  cursor:pointer; font-family:var(--sans); letter-spacing:.12em; text-transform:uppercase;
+  transition:background .2s; min-height:44px;
+}
+.return-btn:hover { background:var(--amber-lt); }
+
+/* ═══════════════════════════════════════════
+   SCREEN 5 · CONTACT FORM
+═══════════════════════════════════════════ */
+.form-scroll { flex:1; overflow-y:auto; padding:20px; background:var(--stone-50); }
+.form-eyebrow { font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--amber); font-weight:600; text-align:center; margin-bottom:4px; }
+.form-h1 { font-family:var(--serif); font-size:24px; color:var(--stone-950); text-align:center; margin-bottom:20px; line-height:1.2; }
+.form-card { background:#fff; border:1px solid var(--stone-200); border-radius:6px; padding:20px; }
+.form-field { display:flex; flex-direction:column; margin-bottom:16px; }
+.form-label { font-size:9px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:var(--stone-950); margin-bottom:6px; }
+.form-input, .form-select, .form-textarea {
+  border:none; border-bottom:1.5px solid var(--stone-200);
+  padding:8px 0; font-size:14px; color:var(--stone-800);
+  background:transparent; font-family:var(--sans); outline:none; transition:border-color .2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-bottom-color:var(--amber); }
+.form-select { -webkit-appearance:none; }
+.form-textarea { resize:none; height:80px; border:1.5px solid var(--stone-200); border-radius:4px; padding:10px; }
+.form-textarea:focus { border-color:var(--amber); }
+.form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-submit {
+  width:100%; background:var(--stone-950); color:#fff; padding:14px;
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:600; border:none; border-radius:4px; margin-top:8px;
+  cursor:pointer; font-family:var(--sans); transition:background .2s; min-height:44px;
+}
+.form-submit:hover { background:var(--amber); }
+.form-privacy { font-size:10px; color:var(--stone-400); text-align:center; margin-top:10px; line-height:1.5; }
+.form-privacy a { color:var(--amber); text-decoration:underline; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 6 · LOW VISION / ACCESSIBILITY
+═══════════════════════════════════════════ */
+.a11y-screen-body { flex:1; overflow-y:auto; background:#1C1917; padding:0; }
+
+.a11y-hero {
+  background:linear-gradient(135deg,#1C1917 0%,#2A1A0E 100%);
+  padding:20px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.a11y-hero-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(15,110,86,.2); border:1px solid rgba(15,110,86,.4);
+  color:#6EE7B7; font-size:9px; padding:3px 10px; border-radius:10px;
+  letter-spacing:.12em; text-transform:uppercase; font-weight:600; margin-bottom:10px;
+}
+.a11y-hero-h { font-family:var(--serif); font-size:22px; color:#fff; line-height:1.2; margin-bottom:6px; }
+.a11y-hero-h em { color:#FBD38D; font-style:italic; }
+.a11y-hero-sub { font-size:12px; color:rgba(255,255,255,.6); line-height:1.6; }
+
+/* Text size control widget */
+.a11y-widget-section { padding:16px 20px; border-bottom:1px solid rgba(255,255,255,.06); }
+.a11y-widget-label   { font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:10px; font-weight:600; }
+
+.text-size-widget {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:8px; padding:10px 14px;
+}
+.tsw-btn {
+  width:40px; height:40px; border-radius:6px; border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06); color:#fff; font-size:16px; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all .2s; font-family:var(--sans);
+}
+.tsw-btn:hover { background:var(--amber); border-color:var(--amber); }
+.tsw-slider { flex:1; -webkit-appearance:none; height:4px; background:rgba(255,255,255,.15); border-radius:2px; cursor:pointer; }
+.tsw-slider::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--amber); cursor:pointer; }
+.tsw-size-display { font-size:11px; color:rgba(255,255,255,.6); font-family:var(--mono); width:32px; text-align:right; flex-shrink:0; }
+
+/* Preview text that scales */
+.a11y-preview-text {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+  border-radius:6px; padding:12px 14px; margin-top:10px;
+}
+.apt-label { font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:6px; }
+.apt-body  { color:rgba(255,255,255,.8); line-height:1.6; transition:font-size .2s; }
+.apt-small { font-size:12px; }
+
+/* Contrast toggles */
+.contrast-row { display:flex; gap:8px; margin-top:0; }
+.contrast-btn {
+  flex:1; padding:10px 8px; border-radius:6px; border:1.5px solid rgba(255,255,255,.1);
+  font-size:10px; font-weight:600; cursor:pointer; font-family:var(--sans);
+  letter-spacing:.06em; text-transform:uppercase; transition:all .2s;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.contrast-btn .cb-swatch { width:24px; height:24px; border-radius:4px; border:2px solid rgba(255,255,255,.2); }
+.contrast-btn.cb-standard { background:rgba(255,255,255,.04); color:rgba(255,255,255,.5); }
+.contrast-btn.cb-high     { background:rgba(255,255,255,.04); color:rgba(255,255,255,.5); }
+.contrast-btn.cb-dark     { background:rgba(255,255,255,.04); color:rgba(255,255,255,.5); }
+.contrast-btn.active      { border-color:var(--amber); color:#fff; background:rgba(146,64,14,.15); }
+
+/* Screen reader toggle */
+.sr-toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+  border-radius:8px; padding:12px 14px; margin-top:10px;
+}
+.sr-toggle-info { flex:1; }
+.sr-toggle-title { font-size:13px; color:#fff; font-weight:500; margin-bottom:2px; }
+.sr-toggle-sub   { font-size:10px; color:rgba(255,255,255,.4); line-height:1.4; }
+.toggle-switch {
+  width:44px; height:26px; background:rgba(255,255,255,.1); border-radius:13px;
+  position:relative; cursor:pointer; transition:background .2s; flex-shrink:0;
+  border:none;
+}
+.toggle-switch::after {
+  content:''; position:absolute; top:3px; left:3px;
+  width:20px; height:20px; border-radius:50%; background:#fff;
+  transition:transform .2s; box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+.toggle-switch.on { background:var(--teal); }
+.toggle-switch.on::after { transform:translateX(18px); }
+
+/* Motion preference card */
+.motion-card {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+  border-radius:8px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px;
+}
+.motion-icon { font-size:24px; flex-shrink:0; }
+.motion-title { font-size:13px; color:#fff; font-weight:500; margin-bottom:2px; }
+.motion-sub   { font-size:10px; color:rgba(255,255,255,.4); line-height:1.4; }
+.motion-status { font-size:9px; background:rgba(15,110,86,.2); color:#6EE7B7; padding:2px 6px; border-radius:4px; letter-spacing:.06em; }
+
+.wcag-row { display:flex; gap:8px; }
+.wcag-badge {
+  flex:1; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+  border-radius:6px; padding:8px; text-align:center;
+}
+.wcag-ratio { font-size:16px; font-weight:700; color:#fff; font-family:var(--mono); margin-bottom:2px; }
+.wcag-label { font-size:8px; color:rgba(255,255,255,.4); letter-spacing:.1em; text-transform:uppercase; }
+.wcag-pass  { font-size:9px; color:#6EE7B7; font-weight:600; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 7 · LANGUAGE SWITCHER
+═══════════════════════════════════════════ */
+.lang-screen-body { flex:1; overflow-y:auto; background:var(--stone-50); padding:0; }
+
+.lang-hero {
+  background:var(--stone-950); padding:20px;
+}
+.lang-hero-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(146,64,14,.15); border:1px solid rgba(146,64,14,.3);
+  color:var(--amber-lt); font-size:9px; padding:3px 10px; border-radius:10px;
+  letter-spacing:.12em; text-transform:uppercase; font-weight:600; margin-bottom:10px;
+}
+.lang-hero-h   { font-family:var(--serif); font-size:22px; color:#fff; line-height:1.2; margin-bottom:4px; }
+.lang-hero-h em { color:var(--amber-lt); font-style:italic; }
+.lang-hero-sub { font-size:11px; color:var(--stone-400); line-height:1.5; }
+
+/* Active language strip */
+.lang-active-strip {
+  background:var(--amber-pale); border-bottom:2px solid var(--amber);
+  padding:8px 20px; display:flex; align-items:center; gap:8px;
+}
+.las-flag { font-size:18px; }
+.las-text  { font-size:11px; color:var(--amber); font-weight:600; letter-spacing:.06em; }
+.las-code  { font-family:var(--mono); font-size:9px; color:var(--amber); background:rgba(146,64,14,.1); padding:1px 5px; border-radius:3px; margin-left:auto; }
+
+/* Language option rows */
+.lang-list { padding:12px 16px; }
+.lang-option-row {
+  display:flex; align-items:center; gap:12px; padding:14px 12px;
+  background:#fff; border:1.5px solid var(--stone-200); border-radius:8px;
+  margin-bottom:8px; cursor:pointer; transition:all .2s;
+  min-height:64px; /* larger than 44px for comfort */
+}
+.lang-option-row:hover { border-color:var(--amber); background:var(--amber-pale); }
+.lang-option-row.selected { border-color:var(--amber); background:var(--amber-pale); }
+.lang-flag-large { font-size:28px; flex-shrink:0; }
+.lang-info { flex:1; }
+.lang-name-en     { font-size:13px; font-weight:600; color:var(--stone-950); margin-bottom:1px; }
+.lang-name-native { font-size:12px; color:var(--stone-600); }
+.lang-native-note { font-size:10px; color:var(--stone-400); margin-top:2px; }
+.lang-radio {
+  width:20px; height:20px; border-radius:50%;
+  border:2px solid var(--stone-200); flex-shrink:0; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.lang-radio.checked { background:var(--amber); border-color:var(--amber); }
+.lang-radio.checked::after { content:''; display:block; width:7px; height:7px; border-radius:50%; background:#fff; }
+
+/* Translated preview panel */
+.lang-preview {
+  margin:0 16px 12px; background:var(--stone-100); border:1px solid var(--stone-200);
+  border-radius:8px; padding:14px; overflow:hidden;
+}
+.lp-label { font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--stone-400); font-weight:600; margin-bottom:8px; }
+.lp-eyebrow { font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--amber); font-weight:600; margin-bottom:3px; }
+.lp-h1 { font-family:var(--serif); font-size:18px; color:var(--stone-950); line-height:1.2; margin-bottom:4px; }
+.lp-h1 em { color:var(--amber); font-style:italic; }
+.lp-sub    { font-size:11px; color:var(--stone-600); line-height:1.5; margin-bottom:8px; }
+.lp-cta-row { display:flex; gap:6px; }
+.lp-cta-p { background:var(--amber); color:#fff; font-size:8px; padding:6px 10px; border-radius:2px; letter-spacing:.1em; text-transform:uppercase; font-weight:600; }
+.lp-cta-g { border:1px solid var(--stone-200); color:var(--stone-600); font-size:8px; padding:6px 10px; border-radius:2px; letter-spacing:.1em; text-transform:uppercase; }
+
+/* ═══════════════════════════════════════════
+   SWIPE DOTS + SCREEN INFO
+═══════════════════════════════════════════ */
+.swipe-dots { display:flex; gap:6px; margin-top:24px; justify-content:center; flex-wrap:wrap; }
+.swipe-dot {
+  width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.2);
+  transition:all .3s; cursor:pointer;
+}
+.swipe-dot.active { background:var(--amber); width:20px; border-radius:3px; }
+.swipe-dot.dot-a11y.active  { background:var(--teal); }
+.swipe-dot.dot-lang.active  { background:var(--amber-lt); }
+
+.screen-info       { margin-top:12px; text-align:center; }
+.screen-info-title { font-family:var(--serif); font-size:13px; color:rgba(255,255,255,.6); font-style:italic; }
+.screen-info-sub   { font-size:10px; color:var(--stone-600); letter-spacing:.1em; text-transform:uppercase; margin-top:3px; }
+
+.swipe-hint {
+  display:flex; align-items:center; gap:8px; margin-top:16px;
+  color:var(--stone-600); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  animation:hint-fade 4s ease-in-out forwards;
+}
+@keyframes hint-fade { 0%{opacity:0;transform:translateX(-6px)} 20%{opacity:1;transform:translateX(0)} 75%{opacity:1} 100%{opacity:0} }
+.swipe-arrow { font-size:14px; }
+
+.keyboard-hint { margin-top:8px; font-size:10px; color:rgba(255,255,255,.14); letter-spacing:.08em; }
+.kbd { display:inline-block; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:3px; padding:1px 5px; font-family:var(--mono); font-size:9px; color:rgba(255,255,255,.3); }
+
+.device-glow {
+  position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);
+  width:280px; height:60px;
+  background:radial-gradient(ellipse,rgba(146,64,14,.3) 0%,transparent 70%);
+  filter:blur(20px); pointer-events:none;
+}
+.device-grain {
+  position:absolute; inset:10px; border-radius:46px; pointer-events:none;
+  opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index:200;
+}
+.footer-credit { margin-top:32px; text-align:center; font-size:10px; color:rgba(255,255,255,.12); letter-spacing:.1em; }
+.footer-credit span { color:rgba(255,255,255,.2); }
+
+/*  visible focus ring everywhere */
+:focus-visible { outline:3px solid var(--amber-lt) !important; outline-offset:2px !important; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--amber-lt) !important; }
+
+::-webkit-scrollbar { width:0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Zco Header -->
+  <div class="zco-header">
+    <div class="zco-logo">
+      <div class="zco-badge">DRK94</div>
+      <div class="zco-name">Juan Diego</div>
+    </div>
+    <div class="version-badge">v2.0 — Accessibility Edition</div>
+    <div class="zco-project">Remodel NYC+CT · iPhone Prototype</div>
+  </div>
+
+  <!-- Title -->
+  <div class="title-block">
+    <h1>Built for <em>generations.</em></h1>
+    <p>7 screens · Low vision support · 4 languages · Swipe or use arrow keys</p>
+  </div>
+
+  <!-- ── OUTER ACCESSIBILITY TOOLBAR ── -->
+  <div class="outer-a11y-bar" role="toolbar" aria-label="Prototype accessibility controls">
+    <span class="oab-label">Display:</span>
+    <button class="oab-btn" id="oab-smaller" onclick="adjustFontScale(-1)" aria-label="Decrease text size">A−</button>
+    <button class="oab-btn" id="oab-larger"  onclick="adjustFontScale(1)"  aria-label="Increase text size">A+</button>
+    <div class="oab-divider" aria-hidden="true"></div>
+    <button class="oab-btn" id="oab-hc" onclick="toggleHighContrast()" aria-pressed="false" aria-label="Toggle high contrast mode">⬤ High Contrast</button>
+    <button class="oab-btn" id="oab-motion" onclick="toggleReducedMotion()" aria-pressed="false" aria-label="Toggle reduced motion">⧖ Reduce Motion</button>
+    <div class="oab-divider" aria-hidden="true"></div>
+    <button class="oab-btn pill-a11y" onclick="goTo(5)" aria-label="View accessibility screen">♿ A11y Screen</button>
+    <button class="oab-btn pill-lang" onclick="goTo(6)" aria-label="View language screen">🌐 Language</button>
+  </div>
+
+  <!-- Screen navigation pills -->
+  <div class="screen-nav" role="tablist" aria-label="App screens">
+    <button class="screen-pill active" onclick="goTo(0)" role="tab" aria-selected="true" aria-controls="screen-0">① Home</button>
+    <button class="screen-pill"        onclick="goTo(1)" role="tab" aria-selected="false" aria-controls="screen-1">② Dashboard</button>
+    <button class="screen-pill"        onclick="goTo(2)" role="tab" aria-selected="false" aria-controls="screen-2">③ Messages</button>
+    <button class="screen-pill"        onclick="goTo(3)" role="tab" aria-selected="false" aria-controls="screen-3">④ Documents</button>
+    <button class="screen-pill"        onclick="goTo(4)" role="tab" aria-selected="false" aria-controls="screen-4">⑤ Contact</button>
+    <button class="screen-pill pill-a11y" onclick="goTo(5)" role="tab" aria-selected="false" aria-controls="screen-5">♿ Low Vision</button>
+    <button class="screen-pill pill-lang" onclick="goTo(6)" role="tab" aria-selected="false" aria-controls="screen-6">🌐 Language</button>
+    <button class="screen-pill pill-sign"  onclick="openSignFlow()" aria-label="Open document signing flow">✍ Sign Doc</button>
+  </div>
+
+  <!-- iPhone Device -->
+  <div class="device-wrap">
+    <div class="device-glow" aria-hidden="true"></div>
+    <div class="iphone" aria-label="iPhone 15 Pro prototype — Remodel NYC+CT app">
+
+      <div class="iphone-chassis" aria-hidden="true">
+        <div class="btn-side btn-mute"></div>
+        <div class="btn-side btn-vol-up"></div>
+        <div class="btn-side btn-vol-down"></div>
+        <div class="btn-side btn-power"></div>
+      </div>
+      <div class="iphone-bezel" aria-hidden="true"></div>
+      <div class="device-grain" aria-hidden="true"></div>
+      <div class="dynamic-island" aria-hidden="true"></div>
+
+      <!-- SCREEN VIEWPORT -->
+      <div class="screen-viewport" id="screenViewport" aria-live="polite" aria-label="App screen">
+        <div class="swipe-track" id="swipeTrack">
+
+          <!-- ════════════════════════════
+               SCREEN 0 · HOME
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-0" role="region" aria-label="Homepage">
+            <div class="status-bar" aria-hidden="true">
+              <span class="status-time">9:41</span>
+              <div class="status-icons">
+                <svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg>
+                <svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/><path d="M2.8 4.8a7 7 0 0110.4 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".4"/></svg>
+                <svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg>
+              </div>
+            </div>
+            <div class="top-nav">
+              <div class="nav-brand">Remodel NYC+CT</div>
+              <div class="nav-burger" aria-label="Open menu" role="button" tabindex="0"><span></span><span></span><span></span></div>
+            </div>
+            <div class="hero-img" role="img" aria-label="Luxury Greenwich kitchen renovation">
+              <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=750&q=80"
+                   alt="" class="hero-img-photo" loading="lazy" draggable="false">
+              <div class="hero-gradient-overlay" aria-hidden="true"></div>
+              <div class="hero-chip">
+                <div class="hero-chip-eye">Featured Renovation</div>
+                <div class="hero-chip-name">The Greenwich Estate</div>
+              </div>
+            </div>
+            <div class="hero-body">
+              <div class="hero-eyebrow">Luxury Redefined for Modern Life</div>
+              <div class="hero-h1">Built for <br><em>generations.</em></div>
+              <div class="hero-sub">High-end residential remodeling tailored for the busy Tri-State family.</div>
+              <div class="hero-btns">
+                <button class="btn-primary" onclick="goTo(3)">View Portfolio</button>
+                <button class="btn-ghost">Reviews ↓</button>
+              </div>
+            </div>
+            <div class="reviews-section" role="list" aria-label="Client reviews">
+              <div class="reviews-label">Client Stories</div>
+              <div class="review-card" role="listitem">
+                <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                <div class="review-quote">"The team transformed our Greenwich kitchen while we were living in the house. The dust control was incredible."</div>
+                <div class="review-author">— The Thompson Family, CT</div>
+              </div>
+              <div class="review-card" role="listitem">
+                <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                <div class="review-quote">"Seamless NYC permitting for our Upper West Side penthouse. The communication was impeccable."</div>
+                <div class="review-author">— Sarah J., Manhattan</div>
+              </div>
+              <div class="review-card" role="listitem">
+                <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                <div class="review-quote">"Finally a contractor that understands high-end finishes and tight timelines."</div>
+                <div class="review-author">— David L., Stamford</div>
+              </div>
+            </div>
+            <nav class="bottom-nav" aria-label="Main navigation">
+              <div class="tab-item active" onclick="goTo(0)" role="tab" aria-label="Home" aria-selected="true"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Home</div></div>
+              <div class="tab-item" onclick="goTo(1)" role="tab" aria-label="Dashboard"><div class="tab-icon" aria-hidden="true">◉</div><div class="tab-label">Dashboard</div></div>
+              <div class="tab-item" onclick="goTo(2)" role="tab" aria-label="Process"><div class="tab-icon" aria-hidden="true">✦</div><div class="tab-label">Process</div></div>
+              <div class="tab-item" onclick="goTo(4)" role="tab" aria-label="Contact"><div class="tab-icon" aria-hidden="true">✉</div><div class="tab-label">Contact</div></div>
+            </nav>
+          </div>
+
+          <!-- ════════════════════════════
+               SCREEN 1 · DASHBOARD
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-1" role="region" aria-label="Project progress dashboard">
+            <div class="status-bar" aria-hidden="true"><span class="status-time">9:41</span><div class="status-icons"><svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg><svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg><svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg></div></div>
+            <div class="portal-hdr">
+              <div><div class="portal-title">UES Kitchen Reno</div><div class="portal-sub">Updated Feb 18, 2026</div></div>
+              <div class="portal-user">John D.</div>
+            </div>
+            <div class="prog-body" id="dashBody">
+              <div class="prog-eye">Project Status</div>
+              <div class="prog-name">UES Reno · Kitchen</div>
+              <div class="stat-row" role="list" aria-label="Project statistics">
+                <div class="stat-card" role="listitem"><div class="stat-label">Complete</div><div class="stat-val" aria-label="65 percent complete">65%</div></div>
+                <div class="stat-card" role="listitem"><div class="stat-label">Est. Done</div><div class="stat-val sm">Mar 14</div></div>
+                <div class="stat-card" role="listitem"><div class="stat-label">Open Items</div><div class="stat-val">3</div></div>
+              </div>
+              <div class="phase-section">
+                <div class="section-label">Phase Progress</div>
+                <div class="phase-row"><div class="phase-name">Demo & Prep</div><div class="phase-track" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="Demo and prep 100%"><div class="phase-fill" style="width:100%;background:#0F6E56"></div></div><div class="phase-pct">100%</div></div>
+                <div class="phase-row"><div class="phase-name">Electrical</div><div class="phase-track" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-label="Electrical 90%"><div class="phase-fill" style="width:90%;background:#0F6E56"></div></div><div class="phase-pct">90%</div></div>
+                <div class="phase-row"><div class="phase-name">Cabinets</div><div class="phase-track" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="Cabinets 60%"><div class="phase-fill" style="width:60%;background:#D97706"></div></div><div class="phase-pct">60%</div></div>
+                <div class="phase-row"><div class="phase-name">Countertop</div><div class="phase-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Countertop not started"><div class="phase-fill" style="width:0%;background:#E7E2DC"></div></div><div class="phase-pct">0%</div></div>
+                <div class="phase-row"><div class="phase-name">Finishing</div><div class="phase-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Finishing not started"><div class="phase-fill" style="width:0%;background:#E7E2DC"></div></div><div class="phase-pct">0%</div></div>
+              </div>
+              <div class="tl-section">
+                <div class="section-label">Daily Timeline</div>
+                <div class="tl-item"><div class="tl-dot-done" aria-hidden="true"></div><div><div class="tl-date">FEB 18 · TODAY</div><div class="tl-title">Appliance installs — range + fridge</div><div class="tl-note">GE range leveled. Refrigerator delivery 2pm.</div><div class="tl-thumbs"><div class="tl-thumb">Before</div><div class="tl-thumb">After</div></div></div></div>
+                <div class="tl-item"><div class="tl-dot-done" aria-hidden="true"></div><div><div class="tl-date">FEB 17</div><div class="tl-title">DOB inspection passed — electrical</div><div class="tl-note">Certificate of inspection filed with NYC DOB.</div></div></div>
+                <div class="tl-item"><div class="tl-dot-upcoming" aria-hidden="true"></div><div><div class="tl-date">FEB 25 · UPCOMING</div><div class="tl-title">Countertop installation</div><div class="tl-note">Calacatta marble slabs — confirmed delivery.</div></div></div>
+              </div>
+            </div>
+            <nav class="bottom-nav" aria-label="Portal navigation">
+              <div class="tab-item active" onclick="goTo(1)" role="tab" aria-label="Dashboard" aria-selected="true"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Dash</div></div>
+              <div class="tab-item" onclick="goTo(2)" role="tab" aria-label="Log"><div class="tab-icon" aria-hidden="true">◎</div><div class="tab-label">Log</div></div>
+              <div class="tab-item" onclick="goTo(3)" role="tab" aria-label="Documents"><div class="tab-icon" aria-hidden="true">◻</div><div class="tab-label">Docs</div></div>
+              <div class="tab-item" onclick="openSignFlow()" role="tab" aria-label="Messages, 2 unread" style="position:relative"><div class="tab-icon" aria-hidden="true">✉</div><div class="tab-label">Msgs</div><div class="tab-badge" aria-label="2 unread messages">2</div></div>
+            </nav>
+          </div>
+
+          <!-- ════════════════════════════
+               SCREEN 2 · MESSAGES
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-2" role="region" aria-label="Contractor messages">
+            <div class="status-bar" aria-hidden="true"><span class="status-time">9:41</span><div class="status-icons"><svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg><svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg><svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg></div></div>
+            <div class="portal-hdr"><div><div class="portal-title">Messages</div><div class="portal-sub">Direct communication</div></div><div class="portal-user">John D.</div></div>
+            <div class="chat-agent-bar">
+              <div class="agent-avatar" aria-hidden="true">MA</div>
+              <div><div class="agent-name">Marco A. — Lead Contractor</div><div class="agent-status">● Online now</div></div>
+            </div>
+            <div class="messages-body" role="log" aria-label="Message history" aria-live="polite">
+              <div class="msg-time">FEB 18 · 8:42 AM</div>
+              <div class="bubble-wrap"><div class="bubble-avatar-sm" aria-hidden="true">MA</div><div class="bubble theirs" role="article" aria-label="Marco said:">Range in and leveled. Refrigerator delivery confirmed 2pm today.</div></div>
+              <div class="bubble-wrap"><div class="bubble-avatar-sm" aria-hidden="true">MA</div><div class="bubble theirs" role="article" aria-label="Marco said:">Change Order #2 sent — please review and sign when you get a chance.</div></div>
+              <div class="msg-time">9:15 AM</div>
+              <div class="bubble-wrap mine"><div class="bubble mine" role="article" aria-label="You said:">Thanks! I'll sign it today. Any update on the cabinet hardware?</div></div>
+              <div class="bubble-wrap"><div class="bubble-avatar-sm" aria-hidden="true">MA</div><div class="bubble theirs" role="article" aria-label="Marco said:">Hardware arrives Thursday — still on schedule. Looking great in here 💪</div></div>
+              <div class="msg-time">9:41 AM</div>
+              <div class="bubble-wrap mine"><div class="bubble mine" role="article" aria-label="You said:">Amazing. Let me know when the marble is confirmed for the 25th.</div></div>
+            </div>
+            <div class="chat-input-bar">
+              <div class="chat-input" role="textbox" aria-label="Type a message" aria-multiline="false">Type a message…</div>
+              <button class="chat-send" aria-label="Send message">➤</button>
+            </div>
+            <nav class="bottom-nav" aria-label="Portal navigation">
+              <div class="tab-item" onclick="goTo(1)" role="tab" aria-label="Dashboard"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Dash</div></div>
+              <div class="tab-item" onclick="goTo(1)" role="tab" aria-label="Log"><div class="tab-icon" aria-hidden="true">◎</div><div class="tab-label">Log</div></div>
+              <div class="tab-item" onclick="goTo(3)" role="tab" aria-label="Documents"><div class="tab-icon" aria-hidden="true">◻</div><div class="tab-label">Docs</div></div>
+              <div class="tab-item active" role="tab" aria-label="Messages" aria-selected="true"><div class="tab-icon" aria-hidden="true">✉</div><div class="tab-label">Msgs</div></div>
+            </nav>
+          </div>
+
+          <!-- ════════════════════════════
+               SCREEN 3 · DOCUMENTS
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-3" role="region" aria-label="Document vault">
+            <div class="status-bar" aria-hidden="true"><span class="status-time">9:41</span><div class="status-icons"><svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg><svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg><svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg></div></div>
+            <div class="portal-hdr"><div><div class="portal-title">Document Vault</div><div class="portal-sub" id="vault-sub">4 docs · 1 awaiting signature</div></div><div class="portal-user">John D.</div></div>
+            <div class="docs-body">
+              <div class="docs-title">Your Documents</div>
+              <div class="upload-zone" role="button" tabindex="0" aria-label="Upload a document. PDF, JPG or PNG accepted."><div class="upload-icon" aria-hidden="true">↑</div><div class="upload-title">Tap to upload</div><div class="upload-sub">PDF · JPG · PNG accepted</div><div class="upload-btn">Upload File</div></div>
+              <div class="doc-row" role="button" tabindex="0" aria-label="Kitchen renovation contract, signed"><div class="doc-icon-box" aria-hidden="true">📄</div><div class="doc-info"><div class="doc-name">Kitchen renovation contract.pdf</div><div class="doc-meta">Jan 12 · 2.3 MB · Contract</div></div><div class="doc-pill pill-signed" aria-label="Status: Signed">Signed</div></div>
+              <div class="doc-row pending" id="signDocRow" onclick="openSignFlow()" role="button" tabindex="0" aria-label="Change order 2, signature required. Tap to sign." onkeydown="if(event.key==='Enter')openSignFlow()"><div class="doc-icon-box pending" aria-hidden="true">📝</div><div class="doc-info"><div class="doc-name">Change order #2 — countertop.pdf</div><div class="doc-meta">Feb 15 · 0.5 MB · Contract</div></div><div class="doc-pill pill-pending" id="signPill" aria-label="Status: Signature required">Sign now</div></div>
+              <div class="doc-row" role="button" tabindex="0" aria-label="DOB permit for electrical, status approved"><div class="doc-icon-box" aria-hidden="true">📋</div><div class="doc-info"><div class="doc-name">DOB permit — electrical.pdf</div><div class="doc-meta">Feb 17 · 0.8 MB · Permit</div></div><div class="doc-pill pill-ok" aria-label="Status: Approved">Approved</div></div>
+              <div class="doc-row" role="button" tabindex="0" aria-label="Certificate of insurance, status active"><div class="doc-icon-box" aria-hidden="true">🛡️</div><div class="doc-info"><div class="doc-name">Certificate of insurance 2026.pdf</div><div class="doc-meta">Jan 2 · 0.3 MB · Insurance</div></div><div class="doc-pill pill-ok" aria-label="Status: Active">Active</div></div>
+            </div>
+            <!-- Sign modal lives here -->
+            <div class="sign-overlay" id="signOverlay" role="dialog" aria-modal="true" aria-label="Document signing — Change Order 2">
+              <div class="sign-sheet" id="signSheet">
+                <div class="sign-handle" aria-hidden="true"></div>
+                <div class="sign-head">
+                  <div class="sign-eye">Signature Required</div>
+                  <div class="sign-title">Change Order #2</div>
+                  <div class="sign-meta">Countertop upgrade · Feb 15, 2026 · 0.5 MB</div>
+                </div>
+                <div class="sign-doc-preview" aria-label="Document preview">
+                  <div class="sign-doc-badge" aria-label="Status: Awaiting Signature">Awaiting Signature</div>
+                  <div class="sign-doc-headline">Change Order #2 — Countertop Upgrade</div>
+                  <div class="doc-line" style="width:80%" aria-hidden="true"></div>
+                  <div class="doc-line" style="width:60%" aria-hidden="true"></div>
+                  <div class="doc-line" style="width:90%" aria-hidden="true"></div>
+                  <div class="doc-line" style="width:70%" aria-hidden="true"></div>
+                  <div class="doc-line" style="width:45%" aria-hidden="true"></div>
+                  <div class="sign-read-link" role="link" tabindex="0">Tap to read full document ↗</div>
+                </div>
+                <div class="sign-field">
+                  <div class="sign-field-label" id="sig-label">Your Signature</div>
+                  <div class="sign-pad" id="signPad" role="application" aria-labelledby="sig-label" aria-describedby="sig-hint">
+                    <canvas id="signCanvas" aria-hidden="true"></canvas>
+                    <div class="sign-pad-hint" id="signHint" id="sig-hint">Sign here with mouse or touch</div>
+                  </div>
+                  <button class="sign-clear" onclick="clearSig()" aria-label="Clear signature">Clear signature</button>
+                  <div class="sign-date-row">
+                    <div class="sign-date-label">Date:</div>
+                    <div class="sign-date-val" aria-label="Signature date: February 18, 2026">February 18, 2026</div>
+                  </div>
+                </div>
+                <div class="sign-actions">
+                  <button class="sign-cancel-btn" onclick="closeSignFlow()">Cancel</button>
+                  <!--  aria-disabled used; tooltip microcopy added via CSS  -->
+                  <button class="sign-confirm-btn" id="confirmBtn" aria-disabled="true" aria-describedby="sig-hint">Confirm &amp; Sign</button>
+                </div>
+              </div>
+              <!-- Success -->
+              <div class="sign-success-sheet" id="successSheet" aria-live="assertive">
+                <div class="success-check-circle" aria-hidden="true">✓</div>
+                <div class="success-title">Document Signed!</div>
+                <div class="success-sub">Change Order #2 has been signed and saved to your vault. Marco has been notified.</div>
+                <div class="success-doc-pill" role="article" aria-label="Signed document summary">
+                  <div class="success-doc-icon" aria-hidden="true">📝</div>
+                  <div><div class="success-doc-name">Change order #2 — countertop.pdf</div><div class="success-doc-meta">Signed Feb 18, 2026 · 9:41am</div></div>
+                  <div class="success-signed-pill" aria-label="Status: Signed">Signed</div>
+                </div>
+                <button class="return-btn" onclick="returnToVault()">Return to Vault</button>
+              </div>
+            </div>
+            <nav class="bottom-nav" aria-label="Portal navigation">
+              <div class="tab-item" onclick="goTo(1)" role="tab" aria-label="Dashboard"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Dash</div></div>
+              <div class="tab-item" onclick="goTo(1)" role="tab" aria-label="Log"><div class="tab-icon" aria-hidden="true">◎</div><div class="tab-label">Log</div></div>
+              <div class="tab-item active" role="tab" aria-label="Documents" aria-selected="true"><div class="tab-icon" aria-hidden="true">◻</div><div class="tab-label">Docs</div></div>
+              <div class="tab-item" onclick="goTo(2)" role="tab" aria-label="Messages"><div class="tab-icon" aria-hidden="true">✉</div><div class="tab-label">Msgs</div></div>
+            </nav>
+          </div>
+
+          <!-- ════════════════════════════
+               SCREEN 4 · CONTACT
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-4" role="region" aria-label="Contact form">
+            <div class="status-bar" aria-hidden="true"><span class="status-time">9:41</span><div class="status-icons"><svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg><svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg><svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg></div></div>
+            <div class="top-nav"><div class="nav-brand">Remodel NYC+CT</div><div class="nav-burger" aria-label="Open menu" role="button" tabindex="0"><span></span><span></span><span></span></div></div>
+            <div class="form-scroll">
+              <div class="form-eyebrow">Serving NYC, Westchester &amp; Fairfield County</div>
+              <div class="form-h1">Start Your Transformation</div>
+              <div class="form-card">
+                <div class="form-field"><label class="form-label" for="f-name">Full Name</label><input type="text" id="f-name" class="form-input" placeholder="Alexandra Davidson" autocomplete="name"></div>
+                <div class="form-grid-2">
+                  <div class="form-field"><label class="form-label" for="f-email">Email</label><input type="email" id="f-email" class="form-input" placeholder="alex@email.com" autocomplete="email"></div>
+                  <div class="form-field"><label class="form-label" for="f-phone">Phone</label><input type="tel" id="f-phone" class="form-input" placeholder="(212) 555-0198" autocomplete="tel"></div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-field"><label class="form-label" for="f-loc">Location</label><select id="f-loc" class="form-select"><option>Manhattan, NY</option><option>Brooklyn, NY</option><option>Greenwich, CT</option><option>Stamford/Darien, CT</option><option>Westchester, NY</option></select></div>
+                  <div class="form-field"><label class="form-label" for="f-proj">Project</label><select id="f-proj" class="form-select"><option>Kitchen</option><option>Bathroom</option><option>Full Estate</option><option>Home Office</option></select></div>
+                </div>
+                <div class="form-field"><label class="form-label" for="f-msg">Your Vision</label><textarea id="f-msg" class="form-textarea" placeholder="How can we help your family thrive in your space?"></textarea></div>
+                <button class="form-submit">Send Inquiry</button>
+                <div class="form-privacy">By submitting you agree to our <a href="#">Privacy Policy</a>.</div>
+              </div>
+            </div>
+            <nav class="bottom-nav" aria-label="Main navigation">
+              <div class="tab-item" onclick="goTo(0)" role="tab" aria-label="Home"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Home</div></div>
+              <div class="tab-item" onclick="goTo(1)" role="tab" aria-label="Dashboard"><div class="tab-icon" aria-hidden="true">◉</div><div class="tab-label">Dashboard</div></div>
+              <div class="tab-item" onclick="goTo(3)" role="tab" aria-label="Documents"><div class="tab-icon" aria-hidden="true">◻</div><div class="tab-label">Docs</div></div>
+              <div class="tab-item active" role="tab" aria-label="Contact" aria-selected="true"><div class="tab-icon" aria-hidden="true">✉</div><div class="tab-label">Contact</div></div>
+            </nav>
+          </div>
+
+          <!-- ════════════════════════════
+               SCREEN 5 · LOW VISION / A11Y
+               (Elena Rodriguez, Marcus Torres, Elena Persona)
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-5" role="region" aria-label="Accessibility settings">
+            <div class="status-bar" style="background:#1C1917" aria-hidden="true"><span class="status-time">9:41</span><div class="status-icons"><svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg><svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg><svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg></div></div>
+            <div class="a11y-screen-body">
+              <!-- Hero -->
+              <div class="a11y-hero">
+                <div class="a11y-hero-tag">♿ Accessibility</div>
+                <div class="a11y-hero-h">Designed for <em>everyone.</em></div>
+                <div class="a11y-hero-sub">Text size, contrast, motion, and screen reader controls — all in one place. Your preferences are saved automatically.</div>
+              </div>
+
+              <!-- Text size -->
+              <div class="a11y-widget-section">
+                <div class="a11y-widget-label">Text Size</div>
+                <div class="text-size-widget">
+                  <button class="tsw-btn" onclick="adjustFontScale(-1)" aria-label="Decrease text size">A−</button>
+                  <input type="range" class="tsw-slider" id="fontSlider" min="1" max="5" value="3" step="1" aria-label="Text size slider" oninput="sliderFontChange(this.value)">
+                  <button class="tsw-btn" onclick="adjustFontScale(1)" aria-label="Increase text size">A+</button>
+                  <div class="tsw-size-display" id="fontSizeDisplay" aria-live="polite">16px</div>
+                </div>
+                <div class="a11y-preview-text">
+                  <div class="apt-label">Preview</div>
+                  <div class="apt-body apt-small" id="previewText">"The team transformed our Greenwich kitchen while we were living in the house."</div>
+                </div>
+              </div>
+
+              <!-- Contrast -->
+              <div class="a11y-widget-section">
+                <div class="a11y-widget-label">Colour Contrast</div>
+                <div class="contrast-row" role="group" aria-label="Contrast mode selection">
+                  <button class="contrast-btn cb-standard active" id="cb-std" onclick="setContrast('standard')" aria-pressed="true">
+                    <div class="cb-swatch" style="background:#FCFAF8;border-color:#E7E2DC" aria-hidden="true"></div>Standard
+                  </button>
+                  <button class="contrast-btn cb-high" id="cb-hc" onclick="setContrast('high')" aria-pressed="false">
+                    <div class="cb-swatch" style="background:#000;border-color:#FFD700" aria-hidden="true"></div>High Contrast
+                  </button>
+                  <button class="contrast-btn cb-dark" id="cb-dark" onclick="setContrast('dark')" aria-pressed="false">
+                    <div class="cb-swatch" style="background:#1C1917;border-color:#92400E" aria-hidden="true"></div>Dark Mode
+                  </button>
+                </div>
+                <!-- WCAG ratios -->
+                <div class="wcag-row" style="margin-top:10px" aria-label="Colour contrast ratios">
+                  <div class="wcag-badge"><div class="wcag-ratio">7.5:1</div><div class="wcag-label">Body text</div><div class="wcag-pass">AAA ✓</div></div>
+                  <div class="wcag-badge"><div class="wcag-ratio">4.8:1</div><div class="wcag-label">Amber CTA</div><div class="wcag-pass">AA ✓</div></div>
+                  <div class="wcag-badge"><div class="wcag-ratio">9.2:1</div><div class="wcag-label">Nav labels</div><div class="wcag-pass">AAA ✓</div></div>
+                </div>
+              </div>
+
+              <!-- Screen reader + Motion toggles -->
+              <div class="a11y-widget-section">
+                <div class="a11y-widget-label">Interaction Preferences</div>
+                <div class="sr-toggle-row">
+                  <div class="sr-toggle-info">
+                    <div class="sr-toggle-title">Screen Reader Mode</div>
+                    <div class="sr-toggle-sub">Enhances focus outlines, adds skip links, exposes ARIA labels for all icons and buttons.</div>
+                  </div>
+                  <button class="toggle-switch" id="srToggle" onclick="toggleSRMode(this)" aria-pressed="false" aria-label="Toggle screen reader mode"></button>
+                </div>
+                <div class="sr-toggle-row" style="margin-top:8px">
+                  <div class="sr-toggle-info">
+                    <div class="sr-toggle-title">Reduce Motion</div>
+                    <div class="sr-toggle-sub">Disables swipe animations and phase bar transitions. Respects your OS preference automatically.</div>
+                  </div>
+                  <button class="toggle-switch" id="motionToggle" onclick="toggleMotionMode(this)" aria-pressed="false" aria-label="Toggle reduced motion"></button>
+                </div>
+              </div>
+
+              <!-- Motion note -->
+              <div class="a11y-widget-section" style="padding-bottom:20px">
+                <div class="a11y-widget-label">System Detection</div>
+                <div class="motion-card">
+                  <div class="motion-icon" aria-hidden="true">🎯</div>
+                  <div>
+                    <div class="motion-title">prefers-reduced-motion</div>
+                    <div class="motion-sub">Your OS accessibility setting is detected automatically. When enabled, all swipe animations become instant transitions.</div>
+                  </div>
+                  <div class="motion-status" id="motionOsStatus">Auto</div>
+                </div>
+              </div>
+            </div>
+            <nav class="bottom-nav" aria-label="Main navigation">
+              <div class="tab-item" onclick="goTo(0)" role="tab" aria-label="Home"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Home</div></div>
+              <div class="tab-item" onclick="goTo(3)" role="tab" aria-label="Documents"><div class="tab-icon" aria-hidden="true">◻</div><div class="tab-label">Docs</div></div>
+              <div class="tab-item active" role="tab" aria-label="Accessibility" aria-selected="true"><div class="tab-icon" aria-hidden="true">♿</div><div class="tab-label">A11y</div></div>
+              <div class="tab-item" onclick="goTo(6)" role="tab" aria-label="Language"><div class="tab-icon" aria-hidden="true">🌐</div><div class="tab-label">Lang</div></div>
+            </nav>
+          </div>
+
+          <!-- ════════════════════════════
+               SCREEN 6 · LANGUAGE
+               (Elena Rodriguez bilingual, Marcus diverse users)
+          ════════════════════════════ -->
+          <div class="app-screen" id="screen-6" role="region" aria-label="Language selection">
+            <div class="status-bar" style="background:#1C1917" aria-hidden="true"><span class="status-time">9:41</span><div class="status-icons"><svg class="s-signal" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4.5" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="9" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg><svg class="s-wifi" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 100 2 1 1 0 000-2z" fill="white"/><path d="M5.2 7.3a4 4 0 015.6 0" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg><svg class="s-batt" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/><path d="M23 4v4a2 2 0 000-4z" fill="white" opacity=".4"/></svg></div></div>
+            <div class="lang-screen-body">
+              <div class="lang-hero">
+                <div class="lang-hero-tag">🌐 Language</div>
+                <div class="lang-hero-h">Select your <em>language.</em></div>
+                <div class="lang-hero-sub">The app fully translates hero copy, navigation, forms, compliance page, and document signing flow across 4 languages.</div>
+              </div>
+              <!-- Active language indicator -->
+              <div class="lang-active-strip" id="langStrip">
+                <div class="las-flag" id="langStripFlag">🇺🇸</div>
+                <div class="las-text" id="langStripText">Currently viewing in English</div>
+                <div class="las-code" id="langStripCode">EN</div>
+              </div>
+              <!-- Language options -->
+              <div class="lang-list" role="radiogroup" aria-label="Select language">
+                <div class="lang-option-row selected" id="lang-en" onclick="selectLang('en')" role="radio" aria-checked="true" tabindex="0" onkeydown="if(event.key==='Enter')selectLang('en')">
+                  <div class="lang-flag-large" aria-hidden="true">🇺🇸</div>
+                  <div class="lang-info"><div class="lang-name-en">English</div><div class="lang-name-native">English</div><div class="lang-native-note">Default language</div></div>
+                  <div class="lang-radio checked" id="lr-en" aria-hidden="true"></div>
+                </div>
+                <div class="lang-option-row" id="lang-es" onclick="selectLang('es')" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter')selectLang('es')">
+                  <div class="lang-flag-large" aria-hidden="true">🇪🇸</div>
+                  <div class="lang-info"><div class="lang-name-en">Spanish</div><div class="lang-name-native">Español</div><div class="lang-native-note">Large NYC/CT community · Elena Rodriguez</div></div>
+                  <div class="lang-radio" id="lr-es" aria-hidden="true"></div>
+                </div>
+                <div class="lang-option-row" id="lang-pt" onclick="selectLang('pt')" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter')selectLang('pt')">
+                  <div class="lang-flag-large" aria-hidden="true">🇧🇷</div>
+                  <div class="lang-info"><div class="lang-name-en">Portuguese</div><div class="lang-name-native">Português</div><div class="lang-native-note">Brazilian Portuguese · Fairfield County market</div></div>
+                  <div class="lang-radio" id="lr-pt" aria-hidden="true"></div>
+                </div>
+                <div class="lang-option-row" id="lang-zh" onclick="selectLang('zh')" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter')selectLang('zh')">
+                  <div class="lang-flag-large" aria-hidden="true">🇨🇳</div>
+                  <div class="lang-info"><div class="lang-name-en">Mandarin</div><div class="lang-name-native">普通话</div><div class="lang-native-note">Simplified Chinese · UTF-8 · NYC market</div></div>
+                  <div class="lang-radio" id="lr-zh" aria-hidden="true"></div>
+                </div>
+              </div>
+              <!-- Live translation preview -->
+              <div class="lang-preview">
+                <div class="lp-label">Live Preview — Hero Screen</div>
+                <div class="lp-eyebrow" id="lp-eyebrow">Luxury Redefined for Modern Life</div>
+                <div class="lp-h1" id="lp-h1">Built for <em>generations.</em></div>
+                <div class="lp-sub" id="lp-sub">High-end residential remodeling tailored for the busy Tri-State family.</div>
+                <div class="lp-cta-row">
+                  <div class="lp-cta-p" id="lp-cta">View Portfolio</div>
+                  <div class="lp-cta-g" id="lp-ghost">Reviews ↓</div>
+                </div>
+              </div>
+            </div>
+            <nav class="bottom-nav" aria-label="Main navigation">
+              <div class="tab-item" onclick="goTo(0)" role="tab" aria-label="Home"><div class="tab-icon" aria-hidden="true">⌂</div><div class="tab-label">Home</div></div>
+              <div class="tab-item" onclick="goTo(3)" role="tab" aria-label="Documents"><div class="tab-icon" aria-hidden="true">◻</div><div class="tab-label">Docs</div></div>
+              <div class="tab-item" onclick="goTo(5)" role="tab" aria-label="Accessibility"><div class="tab-icon" aria-hidden="true">♿</div><div class="tab-label">A11y</div></div>
+              <div class="tab-item active" role="tab" aria-label="Language" aria-selected="true"><div class="tab-icon" aria-hidden="true">🌐</div><div class="tab-label">Lang</div></div>
+            </nav>
+          </div>
+
+        </div><!-- /swipe-track -->
+      </div><!-- /screen-viewport -->
+    </div><!-- /iphone -->
+  </div><!-- /device-wrap -->
+
+  <!-- Swipe dots -->
+  <div class="swipe-dots" role="tablist" aria-label="Navigate screens">
+    <div class="swipe-dot active"   onclick="goTo(0)" role="tab" tabindex="0" aria-label="Screen 1: Home"></div>
+    <div class="swipe-dot"          onclick="goTo(1)" role="tab" tabindex="0" aria-label="Screen 2: Dashboard"></div>
+    <div class="swipe-dot"          onclick="goTo(2)" role="tab" tabindex="0" aria-label="Screen 3: Messages"></div>
+    <div class="swipe-dot"          onclick="goTo(3)" role="tab" tabindex="0" aria-label="Screen 4: Documents"></div>
+    <div class="swipe-dot"          onclick="goTo(4)" role="tab" tabindex="0" aria-label="Screen 5: Contact"></div>
+    <div class="swipe-dot dot-a11y" onclick="goTo(5)" role="tab" tabindex="0" aria-label="Screen 6: Low Vision"></div>
+    <div class="swipe-dot dot-lang" onclick="goTo(6)" role="tab" tabindex="0" aria-label="Screen 7: Language"></div>
+  </div>
+
+  <div class="screen-info">
+    <div class="screen-info-title" id="screenTitle">Homepage Hero</div>
+    <div class="screen-info-sub"   id="screenSub">Public-facing marketing site</div>
+  </div>
+
+  <div class="swipe-hint" aria-hidden="true"><span class="swipe-arrow">←</span><span>Swipe · click pills · arrow keys</span><span class="swipe-arrow">→</span></div>
+  <div class="keyboard-hint" aria-label="Use arrow keys to navigate"><span class="kbd">←</span> <span class="kbd">→</span> arrow keys · <span class="kbd">Esc</span> close modal</div>
+
+  <div class="footer-credit">Built by <span>DRK94</span> · Remodel NYC+CT UX Design Certificate · 2026</div>
+
+</div><!-- /page -->
+
+<script>
+/* ═══════════════════════════════════════════
+   TRANSLATIONS (mirrors strings/es.php, pt.php, zh.php)
+═══════════════════════════════════════════ */
+const TRANSLATIONS = {
+  en: { eyebrow:'Luxury Redefined for Modern Life', h1:'Built for <em>generations.</em>', sub:'High-end residential remodeling tailored for the busy Tri-State family.', cta:'View Portfolio', ghost:'Reviews ↓', strip:'🇺🇸', stripText:'Currently viewing in English', code:'EN' },
+  es: { eyebrow:'El Lujo Redefinido para la Vida Moderna', h1:'Construido para <em>generaciones.</em>', sub:'Remodelación residencial de alta gama para la familia ocupada del Tri-State.', cta:'Ver Portafolio', ghost:'Reseñas ↓', strip:'🇪🇸', stripText:'Visualizando en Español', code:'ES' },
+  pt: { eyebrow:'O Luxo Redefinido para a Vida Moderna', h1:'Construído para <em>gerações.</em>', sub:'Reforma residencial de alto padrão para a família ocupada do Tri-State.', cta:'Ver Portfólio', ghost:'Avaliações ↓', strip:'🇧🇷', stripText:'Visualizando em Português', code:'PT' },
+  zh: { eyebrow:'为现代生活重新定义奢华', h1:'为<em>几代人</em>而建。', sub:'为纽约三州地区繁忙家庭提供高端住宅翻新服务。', cta:'查看作品集', ghost:'客户评价', strip:'🇨🇳', stripText:'正在以中文浏览', code:'ZH' }
+};
+
+/* ═══════════════════════════════════════════
+   SCREEN METADATA (7 screens)
+═══════════════════════════════════════════ */
+const SCREEN_COUNT = 7;
+let currentScreen  = 0;
+let isSignOpen     = false;
+let hasSigned      = false;
+let fontStep       = 0;   // -2 … +4
+let hcMode         = false;
+let reducedMotion  = false;
+let srMode         = false;
+let currentLang    = 'en';
+
+const FONT_STEPS   = [12, 14, 16, 18, 20, 22, 26]; // px values for slider 0–6
+let   sliderStep   = 2; // index into FONT_STEPS, default = 16px
+
+const TITLES = ['Homepage Hero','Progress Dashboard','Contractor Messages','Document Vault','Contact & Inquiry','Low Vision / A11y','Language Switcher'];
+const SUBS   = ['Public-facing marketing site','Client portal · live phase tracking','Real-time contractor chat','Legal docs & signature flow','Lead capture form','WCAG contrast · text size · screen reader','EN · ES · PT · ZH full translation'];
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+const track   = document.getElementById('swipeTrack');
+const dots    = document.querySelectorAll('.swipe-dot');
+const pills   = document.querySelectorAll('.screen-pill');
+
+function goTo(n) {
+  if (n < 0 || n >= SCREEN_COUNT) return;
+  currentScreen = n;
+
+  // FIX: use CSS custom property for track width so it's not hardcoded
+  track.style.transform = `translateX(-${n * 375}px)`;
+
+  dots.forEach((d, i)  => d.classList.toggle('active', i === n));
+  pills.forEach((p, i) => {
+    const isActive = i === n;
+    p.classList.toggle('active', isActive);
+    p.setAttribute('aria-selected', isActive);
+  });
+
+  document.getElementById('screenTitle').textContent = TITLES[n];
+  document.getElementById('screenSub').textContent   = SUBS[n];
+
+  // Animate phase bars on dashboard arrival
+  if (n === 1) {
+    setTimeout(() => document.getElementById('dashBody').classList.add('animate-phases'), 200);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SWIPE — TOUCH
+═══════════════════════════════════════════ */
+const viewport = document.getElementById('screenViewport');
+let touchStartX = 0, touchStartY = 0, isDragging = false;
+
+viewport.addEventListener('touchstart', e => {
+  if (isSignOpen) return;
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  isDragging  = false;
+}, { passive: true });
+
+viewport.addEventListener('touchmove', e => {
+  if (isSignOpen) return;
+  const dx = e.touches[0].clientX - touchStartX;
+  const dy = e.touches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+    isDragging = true;
+    if (!reducedMotion) {
+      const offset = -(currentScreen * 375) + dx * 0.55;
+      track.style.transition = 'none';
+      track.style.transform  = `translateX(${offset}px)`;
+    }
+  }
+}, { passive: true });
+
+viewport.addEventListener('touchend', e => {
+  if (isSignOpen) return;
+  track.style.transition = '';
+  if (!isDragging) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if      (dx < -44 && currentScreen < SCREEN_COUNT - 1) goTo(currentScreen + 1);
+  else if (dx > 44  && currentScreen > 0)                goTo(currentScreen - 1);
+  else                                                    goTo(currentScreen);
+  isDragging = false;
+}, { passive: true });
+
+/* ═══════════════════════════════════════════
+   SWIPE — MOUSE (desktop drag)
+   stopPropagation prevents form inputs from being blocked
+═══════════════════════════════════════════ */
+let mouseDown  = false;
+let mouseDragX = 0;
+let didDrag    = false;
+
+viewport.addEventListener('mousedown', e => {
+  if (isSignOpen) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON' || e.target.tagName === 'CANVAS') return;
+  mouseDown  = true;
+  mouseDragX = e.clientX;
+  didDrag    = false;
+  track.style.transition = 'none';
+});
+window.addEventListener('mousemove', e => {
+  if (!mouseDown || isSignOpen) return;
+  const dx = e.clientX - mouseDragX;
+  if (Math.abs(dx) > 4) {
+    didDrag = true;
+    if (!reducedMotion) {
+      track.style.transform = `translateX(${-(currentScreen * 375) + dx * 0.5}px)`;
+    }
+  }
+});
+window.addEventListener('mouseup', e => {
+  if (!mouseDown) return;
+  mouseDown = false;
+  track.style.transition = '';
+  if (!didDrag) return;
+  const dx = e.clientX - mouseDragX;
+  if      (dx < -30 && currentScreen < SCREEN_COUNT - 1) goTo(currentScreen + 1);
+  else if (dx > 30  && currentScreen > 0)                goTo(currentScreen - 1);
+  else                                                    goTo(currentScreen);
+});
+
+/* ═══════════════════════════════════════════
+   KEYBOARD NAVIGATION
+═══════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { e.preventDefault(); goTo(currentScreen + 1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(currentScreen - 1); }
+  if (e.key === 'Escape' && isSignOpen) closeSignFlow();
+});
+
+/* ═══════════════════════════════════════════
+   SIGNING FLOW
+═══════════════════════════════════════════ */
+const overlay    = document.getElementById('signOverlay');
+const confirmBtn = document.getElementById('confirmBtn');
+const signCanvas = document.getElementById('signCanvas');
+const signPad    = document.getElementById('signPad');
+const signHint   = document.getElementById('signHint');
+let   ctx, drawing;
+
+function openSignFlow() {
+  const delay = currentScreen !== 3 ? 480 : 10;
+  if (currentScreen !== 3) goTo(3);
+  isSignOpen = true;
+  setTimeout(() => {
+    overlay.classList.add('open');
+    initCanvas();
+    // move focus into modal for keyboard/screen reader users
+    setTimeout(() => confirmBtn.focus(), 100);
+  }, delay);
+}
+
+function closeSignFlow() {
+  overlay.classList.remove('open','success');
+  isSignOpen = false;
+  clearSig();
+  document.getElementById('signSheet').style.display = '';
+}
+
+function returnToVault() {
+  closeSignFlow();
+  // Update vault UI
+  const row  = document.getElementById('signDocRow');
+  const pill = document.getElementById('signPill');
+  row.classList.remove('pending');
+  row.querySelector('.doc-icon-box').classList.remove('pending');
+  pill.className   = 'doc-pill pill-signed';
+  pill.textContent = 'Signed ✓';
+  pill.setAttribute('aria-label','Status: Signed');
+  document.getElementById('vault-sub').textContent = '4 docs · all signed';
+  row.setAttribute('aria-label','Change order 2 — countertop, signed');
+}
+
+function initCanvas() {
+  const rect = signPad.getBoundingClientRect();
+  signCanvas.width  = rect.width  || 295;
+  signCanvas.height = rect.height || 88;
+  ctx = signCanvas.getContext('2d');
+  ctx.strokeStyle = '#92400E';
+  ctx.lineWidth   = 2.2;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  drawing = false;
+
+  signCanvas.onmousedown  = startDraw;
+  signCanvas.onmousemove  = doDraw;
+  signCanvas.onmouseup    = stopDraw;
+  signCanvas.ontouchstart = e => { e.preventDefault(); startDraw(e.touches[0]); };
+  signCanvas.ontouchmove  = e => { e.preventDefault(); doDraw(e.touches[0]); };
+  signCanvas.ontouchend   = stopDraw;
+}
+
+function getCanvasPos(e) {
+  const r = signCanvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) * (signCanvas.width  / r.width),
+    y: (e.clientY - r.top)  * (signCanvas.height / r.height)
+  };
+}
+
+function startDraw(e) {
+  drawing = true;
+  const p = getCanvasPos(e);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  if (!hasSigned) {
+    hasSigned = true;
+    signHint.style.display = 'none';
+    signPad.classList.add('has-sig');
+    // remove aria-disabled, add enabled class for real interactivity
+    confirmBtn.removeAttribute('aria-disabled');
+    confirmBtn.classList.add('enabled');
+    confirmBtn.onclick = confirmSign;
+    confirmBtn.setAttribute('aria-label','Confirm and sign document');
+  }
+}
+function doDraw(e) {
+  if (!drawing) return;
+  const p = getCanvasPos(e);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+}
+function stopDraw() { drawing = false; }
+
+function clearSig() {
+  if (ctx) ctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+  hasSigned = false;
+  if (signHint) signHint.style.display = '';
+  if (signPad)  signPad.classList.remove('has-sig');
+  confirmBtn.setAttribute('aria-disabled','true');
+  confirmBtn.classList.remove('enabled');
+  confirmBtn.onclick = null;
+  confirmBtn.setAttribute('aria-label','Confirm and sign — draw your signature first');
+}
+
+function confirmSign() {
+  overlay.classList.add('success');
+  // announce to screen readers
+  const ss = document.getElementById('successSheet');
+  ss.setAttribute('aria-live','assertive');
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY — FONT SCALE
+═══════════════════════════════════════════ */
+function adjustFontScale(dir) {
+  sliderStep = Math.max(0, Math.min(FONT_STEPS.length - 1, sliderStep + dir));
+  applyFontScale();
+}
+function sliderFontChange(val) {
+  sliderStep = parseInt(val);
+  applyFontScale();
+}
+function applyFontScale() {
+  const px = FONT_STEPS[sliderStep];
+  document.documentElement.style.fontSize = px + 'px';
+  const disp = document.getElementById('fontSizeDisplay');
+  if (disp) disp.textContent = px + 'px';
+  const slider = document.getElementById('fontSlider');
+  if (slider) slider.value = sliderStep;
+  // Scale preview text
+  const prev = document.getElementById('previewText');
+  if (prev) prev.style.fontSize = Math.round(px * 0.75) + 'px';
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY — HIGH CONTRAST
+═══════════════════════════════════════════ */
+function toggleHighContrast() {
+  hcMode = !hcMode;
+  document.body.classList.toggle('hc-mode', hcMode);
+  const btn = document.getElementById('oab-hc');
+  btn.classList.toggle('active', hcMode);
+  btn.setAttribute('aria-pressed', hcMode);
+  // Sync contrast buttons
+  setContrast(hcMode ? 'high' : 'standard');
+}
+
+function setContrast(mode) {
+  ['cb-std','cb-hc','cb-dark'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('active'); el.setAttribute('aria-pressed','false'); }
+  });
+  if (mode === 'standard') { document.body.classList.remove('hc-mode'); hcMode = false; document.getElementById('cb-std').classList.add('active'); document.getElementById('cb-std').setAttribute('aria-pressed','true'); }
+  if (mode === 'high')     { document.body.classList.add('hc-mode');    hcMode = true;  document.getElementById('cb-hc').classList.add('active');  document.getElementById('cb-hc').setAttribute('aria-pressed','true');  }
+  if (mode === 'dark')     { document.body.classList.remove('hc-mode'); hcMode = false; document.getElementById('cb-dark').classList.add('active'); document.getElementById('cb-dark').setAttribute('aria-pressed','true'); }
+  const oabBtn = document.getElementById('oab-hc');
+  if (oabBtn) { oabBtn.classList.toggle('active', mode === 'high'); oabBtn.setAttribute('aria-pressed', mode === 'high'); }
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY — REDUCED MOTION
+═══════════════════════════════════════════ */
+function toggleReducedMotion() {
+  reducedMotion = !reducedMotion;
+  const btn = document.getElementById('oab-motion');
+  btn.classList.toggle('active', reducedMotion);
+  btn.setAttribute('aria-pressed', reducedMotion);
+  const mt = document.getElementById('motionToggle');
+  if (mt) { mt.classList.toggle('on', reducedMotion); mt.setAttribute('aria-pressed', reducedMotion); }
+  if (reducedMotion) {
+    track.style.transition = 'none';
+  } else {
+    track.style.transition = 'transform .42s cubic-bezier(.4,.0,.2,1)';
+  }
+}
+function toggleMotionMode(btn) {
+  reducedMotion = !reducedMotion;
+  btn.classList.toggle('on', reducedMotion);
+  btn.setAttribute('aria-pressed', reducedMotion);
+  const oabBtn = document.getElementById('oab-motion');
+  if (oabBtn) { oabBtn.classList.toggle('active', reducedMotion); oabBtn.setAttribute('aria-pressed', reducedMotion); }
+  if (reducedMotion) track.style.transition = 'none';
+  else track.style.transition = 'transform .42s cubic-bezier(.4,.0,.2,1)';
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY — SCREEN READER MODE
+═══════════════════════════════════════════ */
+function toggleSRMode(btn) {
+  srMode = !srMode;
+  btn.classList.toggle('on', srMode);
+  btn.setAttribute('aria-pressed', srMode);
+  document.body.classList.toggle('sr-mode', srMode);
+}
+
+/* ═══════════════════════════════════════════
+   LANGUAGE SWITCHER
+═══════════════════════════════════════════ */
+function selectLang(code) {
+  currentLang = code;
+  const t = TRANSLATIONS[code];
+  // Deselect all
+  ['en','es','pt','zh'].forEach(c => {
+    document.getElementById('lang-'+c).classList.remove('selected');
+    document.getElementById('lang-'+c).setAttribute('aria-checked','false');
+    document.getElementById('lr-'+c).classList.remove('checked');
+  });
+  // Select chosen
+  document.getElementById('lang-'+code).classList.add('selected');
+  document.getElementById('lang-'+code).setAttribute('aria-checked','true');
+  document.getElementById('lr-'+code).classList.add('checked');
+  // Update strip
+  document.getElementById('langStripFlag').textContent = t.strip;
+  document.getElementById('langStripText').textContent = t.stripText;
+  document.getElementById('langStripCode').textContent = t.code;
+  // Update live preview
+  document.getElementById('lp-eyebrow').textContent = t.eyebrow;
+  document.getElementById('lp-h1').innerHTML = t.h1;
+  document.getElementById('lp-sub').textContent = t.sub;
+  document.getElementById('lp-cta').textContent = t.cta;
+  document.getElementById('lp-ghost').textContent = t.ghost;
+}
+
+/* ═══════════════════════════════════════════
+   DETECT OS REDUCED-MOTION
+═══════════════════════════════════════════ */
+const osReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const osStatus = document.getElementById('motionOsStatus');
+if (osReducedMotion.matches) {
+  if (osStatus) osStatus.textContent = 'Active';
+  osStatus && (osStatus.style.background = 'rgba(15,110,86,.2)');
+} else {
+  if (osStatus) osStatus.textContent = 'Inactive';
+}
+osReducedMotion.addEventListener('change', e => {
+  if (osStatus) osStatus.textContent = e.matches ? 'Active' : 'Inactive';
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+goTo(0);
+// Stagger phase fill animations
+document.getElementById('dashBody').querySelectorAll('.phase-fill').forEach((el, i) => {
+  el.style.animationDelay = `${i * 0.15}s`;
+});
+</script>
+</body>
+</html>

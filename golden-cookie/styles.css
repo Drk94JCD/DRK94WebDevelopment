@@ -1,0 +1,427 @@
+/* --- THEME VARIABLES --- */
+:root {
+    --bg-main: #1a1a2e;
+    --text-main: #ffffff;
+    --nav-bg-color: rgba(22, 33, 62, 0.95);
+}
+
+body.light-mode {
+    --bg-main: #f0f2f5;
+    --text-main: #1a1a2e;
+    --nav-bg-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Updated Body to use variables */
+body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease;
+}
+
+/* Theme Toggle Button Style */
+.theme-toggle-btn {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid #ffd700;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    z-index: 10001; /* Higher than any overlay */
+    transition: 0.3s;
+}
+
+.theme-toggle-btn:hover {
+    background: #ffd700;
+    color: #1a1a2e;
+}
+
+/* Your Original Navbar - Updated background to variable */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    background: var(--nav-bg-color);
+    backdrop-filter: blur(10px);
+    border-bottom: 3px solid #ffd700;
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+}
+
+/* Recipe Overlay Styles */
+.recipe-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(26, 26, 46, 0.98);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+    padding: 20px;
+}
+
+.recipe-card {
+    background: #fdfaf1;
+    color: #333;
+    padding: 40px;
+    max-width: 500px;
+    border-radius: 2px;
+    box-shadow: 10px 10px #ffd700;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.recipe-header { border-bottom: 2px solid #333; margin-bottom: 20px; }
+.recipe-tag { background: #e94560; color: white; padding: 2px 8px; font-size: 0.8rem; text-transform: uppercase; }
+.recipe-body { display: flex; gap: 20px; text-align: left; }
+.recipe-body h3 { font-size: 1.1rem; color: #e94560; margin-bottom: 10px; }
+.recipe-body ul, .recipe-body ol { padding-left: 20px; font-size: 0.9rem; }
+
+.recipe-btn {
+    margin-top: 30px;
+    width: 100%;
+    padding: 15px;
+    background: #333;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: 0.3s;
+}
+
+.recipe-btn:hover { background: #e94560; transform: translateY(-3px); }
+
+/* Tip Jar Nav Button */
+.tip-jar-btn {
+    background: linear-gradient(45deg, #ffd700, #ffa700);
+    color: #1a1a2e !important;
+    border: none !important;
+    padding: 8px 18px !important;
+    border-radius: 50px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    animation: jar-jiggle 3s infinite ease-in-out;
+}
+
+.tip-jar-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes jar-jiggle {
+    0%, 90% { transform: rotate(0deg); }
+    92% { transform: rotate(-5deg); }
+    95% { transform: rotate(5deg); }
+    98% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Rest of the styles */
+#results-overlay #save-btn {
+    background-color: #e94560;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 15px;
+}
+
+#results-overlay #save-btn:hover {
+    background-color: #ff5e78;
+    transform: translateY(-2px);
+}
+
+.nav-logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: linear-gradient(to bottom, #fff7ad 0%, #ffa700 50%, #ffc100 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+    animation: gold-shimmer 3s infinite ease-in-out;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-links a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 8px 15px;
+    border: 1px solid #ffd700;
+    border-radius: 4px;
+    transition: 0.3s;
+    font-size: 0.85rem;
+}
+
+.bg-scrolling-text {
+    position: fixed;
+    top: 50%; left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.scrolling-content {
+    display: inline-block;
+    font-size: 10rem;
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 215, 0, 0.15); 
+    text-transform: uppercase;
+    animation: scroll-left 40s linear infinite;
+}
+
+@keyframes scroll-left {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    padding-bottom: 100px;
+    flex-grow: 1;
+}
+
+#cookie-btn {
+    font-size: 120px;
+    background: none; border: none;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    transition: transform 0.1s, filter 0.3s;
+    margin: 20px 0;
+}
+
+#cookie-btn:hover {
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9)) brightness(1.2);
+    animation: cookie-shake 0.2s infinite;
+    transform: scale(1.1);
+}
+
+#cookie-btn:active { transform: scale(0.95); }
+#score { font-size: 4rem; font-weight: bold; color: #e94560; }
+
+.floating-point {
+    position: absolute;
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: float-up-fade 0.8s ease-out forwards;
+    z-index: 2000;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 2000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.85);
+}
+
+.modal-content {
+    background-color: #16213e;
+    margin: 15% auto;
+    padding: 30px;
+    border: 2px solid #e94560;
+    width: 320px;
+    text-align: center;
+    border-radius: 15px;
+    color: #fff;
+}
+
+#results-overlay .modal-content {
+    background: #fdfaf1;
+    color: #333;
+    border: 3px solid #ffd700;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.game-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--nav-bg-color);
+    color: var(--text-main);
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.85rem;
+    border-top: 2px solid #ffd700;
+    z-index: 100;
+    letter-spacing: 1px;
+}
+
+.game-footer strong {
+    color: #ffd700;
+    text-transform: uppercase;
+}
+
+@keyframes gold-shimmer {
+    0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4)); }
+    50% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
+}
+@keyframes cookie-shake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+@keyframes float-up-fade {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-100px); }
+}
+/* --- Styled Username Input --- */
+#username {
+    background: #16213e;      /* Darker blue to match the theme */
+    border: 2px solid #ffd700; /* Gold border */
+    border-radius: 8px;       /* Rounded corners */
+    padding: 12px 20px;       /* Spacing inside the box */
+    color: #ffffff;           /* White text */
+    font-family: 'Courier New', monospace; /* Typewriter font for a 'recipe' feel */
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;       /* Centers the name you type */
+    letter-spacing: 2px;      /* Spreads letters out for style */
+    outline: none;            /* Removes the default blue browser outline */
+    transition: 0.3s;         /* Smooth transition for the glow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+}
+
+/* Effect when you click inside the box */
+#username:focus {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* Gold glow */
+    transform: translateY(-2px);                /* Slight lift effect */
+    border-color: #fff7ad;                      /* Brighter gold border */
+}
+
+/* Styling the placeholder text (ENTER YOUR NAME) */
+#username::placeholder {
+    color: #ffd700;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+/* --- Styled Timer HUD --- */
+.timer-wrapper {
+    background: rgba(233, 69, 96, 0.1); /* Subtle red tint */
+    border: 1px solid #e94560;         /* Red border to signal urgency */
+    padding: 8px 20px;
+    border-radius: 50px;               /* Pill shape */
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(233, 69, 96, 0.2);
+}
+
+#timer-display {
+    color: #e94560;                    /* Bright red for the actual seconds */
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px rgba(233, 69, 96, 0.5);
+}
+
+/* Optional: Make the timer pulse when time is running low */
+.timer-low {
+    animation: timer-pulse 0.5s infinite alternate;
+    border-color: #ff0000;
+}
+
+@keyframes timer-pulse {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(1.05); opacity: 0.8; }
+}
+/* --- MOBILE RESPONSIVENESS --- */
+
+/* For tablets and phones */
+@media (max-width: 768px) {
+    .nav-logo {
+        font-size: 1.2rem; /* Smaller logo */
+    }
+    
+    .nav-links {
+        gap: 8px;
+    }
+
+    .nav-links a, .theme-toggle-btn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+    }
+
+    .scrolling-content {
+        font-size: 4rem; /* Smaller background text so it's not overwhelming */
+    }
+
+    #cookie-btn {
+        font-size: 100px; /* Slightly smaller cookie */
+    }
+
+    #score {
+        font-size: 3rem;
+    }
+
+    .recipe-card, .modal-content {
+        width: 90%; /* Let cards take up more width on small screens */
+        padding: 20px;
+    }
+
+    .recipe-body {
+        flex-direction: column; /* Stack ingredients and instructions vertically */
+        gap: 10px;
+    }
+}
+
+/* For very small phones */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+    }
+    
+    .tip-jar-btn span {
+        display: none; /* Hide emoji to save space */
+    }
+    
+    #username {
+        width: 80%; /* Ensure input doesn't hit screen edges */
+    }
+}
+
+/* Prevent accidental zooming on mobile when tapping fast */
+#cookie-btn {
+    touch-action: manipulation;
+}
