@@ -1,6 +1,6 @@
 # 🎨 Juan Carlos Diego — Portfolio
 
-**Live portfolio:** `https://[your-username].github.io/portfolio/`
+**Live portfolio:** `https://drk94jcd.github.io/DRK94WebDevelopment/`
 
 Built with pure HTML5, CSS3, and Vanilla JS. No frameworks, no dependencies.
 
